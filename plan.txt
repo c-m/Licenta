@@ -1,0 +1,47 @@
+-------------------------------------------------------------------------------
+* Thesis
+-------------------------------------------------------------------------------
+parskip -> space between paragraphs
+listings -> code
+booktabs -> tables
+
+Titles
+
+Table of contents:
+1. Introduction / Motivation    
+2. Background: State of the Art & Related Work
+3. Problem Description (Design of the model). Methods used.
+4. Implementation (sw, alg., technologies used) + Testing
+5. Evaluation
+6. Conclusions / Further Work
+
+1,2,3,4,5,6
+
+Appendix
+List of figures
+Bibliography
+
+
+-------------------------------------------------------------------------------
+* Practical project
+-------------------------------------------------------------------------------
+
+Notes after meeting 2016-06-29:
+
+Predictie
+    - examen
+    - sa scadem nr. de studenti cu note mici
+    - prevenit abandonul
+    - anii sunt diferiti
+    - nota la ex. practic (detalii in mail)
+
+Analiza educationala
+    - cele mai importante feature-uri
+    - comparatie AA vs PP (teorie vs practica) ???
+    - feedback (poze in mail)
+    - analiza simplificata: _sum_i_(alpha_i * h_i) -> nota (finala, nu examen)
+    - plot features and final grade on the same graph with different colors / PCA
+
+Meta-model
+    - Input: materie(AA/PP), features (must have constant dimension)
+    - Output: predictions, statistics -> can make analysis

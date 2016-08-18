@@ -1,0 +1,137 @@
+\chapter{Background}
+
+\section{State of the Art}
+
+\subsection{A very short history of Machine Learning}
+``You have to know the past to understand the present.'' - Carl Sagan
+
+The early beginnings of Machine Learning come not after the first electronic 
+computers or after the first computer programs, as many may believe so. The 
+fundamentals of this field took shape centuries ago with the discovery of the 
+so-called Conditional Probability theories. {\bf Bayes Theorem}, named after Thomas 
+Bayes who first proposed a mathematical model for infering probabilities of 
+conditioned events, and further developed by Pierre-Simon Laplace in his essay 
+\footnote{Théorie Analytique des Probabilités} in 1812, can be seen as one of the first models 
+that can ``learn'' from given data and predict events based on correlated past events.
+Another old discovery that is the basis of today's regression models (e.g.: 
+Linear Regression) is the ``least squares method'', credited to Carl Gauss, but 
+first published by Adrien-Marie Legendre in 1805. This method was first applied in 
+astronomy and allowed explorers to navigate oceans by aproximating the movement of 
+celestial bodies.
+
+Later on, in 1950, Alan Turing proposed in his paper\footnote{Turing, A.M. (1950). 
+Computing machinery and intelligence. Mind, 59, 433-460.} a {\it learning machine} 
+that is able to learn and become intelligent and do well in the {\bf Imitation Game} 
+(now generally called the {\bf Turing Test}). 
+
+After this, the discovery of the Percetron and the {\bf Neural Networks} around 1960s drew 
+some attention in the field, but their current limitations had put Machine Learning on an 
+impeding state for almost 10 years. It was only with the invention of the 
+backpropagation algorithm in 1974 by Paul Werbos and the demonstration of its 
+generalization by Geoffrey Hinton in 1986, that allowed it to be applied in 
+multi-layered artificial neural networks. This also gave birth to a new sub-field 
+of Machine Learning that today is called {\bf Deep Learning.}
+
+Along with the research in neural networks, some other models that were developed in that 
+period are worth to mention. The most important ones are Support Vector Machines and kernels 
+(models used for data classification and regression, that can be more time-efficient 
+than neural networks are and provide good performance from a data perspective) and Decision Trees. 
+The latter, in combination with Ensemble Methods helped researchers invent models like 
+{\bf Random Forests} and {\bf Adaptive Boosting} that are now state-of-the-art 
+algorithms for tree models used for a lot of tasks.
+
+\subsection{Current interests in the field}
+
+Coming back to Deep Learning, which is today's main subject of interest of the 
+Machine Learning community, it is a general approach that combines several state-of-the-art 
+models of Machine Learning to solve problems such as image classification, AI for 
+computer games, natural language, etc. Its constituents include neural networks with many 
+hidden layers, convolutional networks, deep belief networks and recurrent networks. 
+Also, the Q-Learning algorithm\footnote{Watkins, C.J.C.H. (1989). Learning from Delayed Rewards. 
+PhD thesis, Cambridge University, Cambridge, England} and the Monte-Carlo search used 
+in combination with convolutional networks allowed researchers to build semi-supervised 
+learning programs that could learn to play computer games by themselves\footnote
+{https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf} or beat professional human players at 
+games, such as Go (Google AlphaGo's program first beat Lee Sedol in October 2015). 
+
+\subsection{Trends in educational learning}
+
+All advances in the Machine Learning field also conducted in an incresing interest in 
+educational learning and assessment. With the name of {\bf Educational Data Mining}, 
+this newly emerging discipline deals with studying machine learning and data mining 
+models in order to gain important knowledge about the structure of an educational 
+system data (final grades, performance indicators, course drop-outs). Educational 
+data can be taken from schools and universities (the classical way and also, the way 
+that this thesis explores), online courses (such as MOOCs\footnote{Massive Open 
+Online Courses}), or even collaborative learning.
+
+With the use of Machine Learning techniques, student can better decide on what courses 
+they could take (based on past related grades), whether they have a chance or not to 
+pass an exam before taking it and what indicators are relevant to their final asessment. 
+The course department also benefits from the ``learned'' data because it helps them 
+to better plan the structure of their courses, whether they are on-line or taken at 
+the university.
+
+\section{Related Work}
+
+This part of the chapter will focus on the work on other people about the study 
+on student performance prediction and analysis. Some of their research is similar 
+to that of this thesis, and some others treat only related issues. 
+
+(Mehdi Sajjadi et al., 2016)\cite{bibl_1} did some work on approximating final grades 
+of students in a course on algorithms. In the grading process they used the peer 
+grading method\footnote{A process in which students grade work of other students 
+based on a given guideline}, and then applied Machine Learning (both supervised and 
+usupervised) to aggregate those grades into a final grade. Their results were 
+not so good compared to the simple method of just using the mean of all peer grades 
+per an assessment as the final grade. 
+
+(Siddharth Reddy et al., 2015)\cite{bibl_2} worked on developing a representational 
+model of combined students and educational content (assessments and lessons). 
+This representation is actually a semantic space\footnote{Semantic similarity 
+between objects represented as a kind of ``metric'' in space} and it can be used 
+to study the relation between course content and students. Several conclusions can 
+be drawn from these representations, such as: probability of passing an assessment 
+or course and knowledge gained from completing a lesson. This article aimed mostly 
+at MOOCs platforms, like Coursera, EdX and Khan Academy, and the model described 
+was tested on synthetic student data and also, on real data from Knewton.
+Their model's results can be used to personalize the learning process of a course 
+for each student in order to maximize the educational performance. Also, this 
+model successfully predicted assessment results.
+
+(Michael Wu, 2015)\cite{bibl_2_1} wrote an interesting Master Thesis in which 
+describes a Machine Learning Model that simulates MOOC data. Working with data 
+gathered from EdX, the model once trained, can be able to synthesize student data.
+The model was trained to learn about student types, habits and difficulty of course 
+materials. One of the main results of the thesis was being able to classify 
+students in 20 important clusters.
+
+(Saeed Hosseini Teshnizi and Sayyed Mohhamad Taghi Ayatollahi, 2015)\cite{bibl_3} 
+did a comparasion between Logistic Regression and ANNs\footnote{Artificial 
+Neural Networks} on a dataset composed of 275 undergraduate students and 16 
+student characteristics (e.g.: age, gender, parent education, employment status, 
+place of residence, etc.) in order to predict academic failure. They concluded that 
+the neural network models had a better accuracy than Logistic Regression (84.3\% 
+versus 77.5\%). They tested 9 ANNs from which the one with 15 neurons in the 
+hidded layer provided the best results, so ANNs methods were appropiate to be used 
+in their problem. 
+
+Other references\cite{bibl_4},\cite{bibl_5},\cite{bibl_6} also treat prediction 
+of student academic performance mostly with neural networks and provide good 
+accuracy with this model (the accuracy is also dependent of the structure of 
+the dataset, number of examples, number of characteristics and noise in the 
+data).
+
+(Emaan Abdul Majeed and Khurum Nazir Junejo)\cite{bibl_7} had some great results 
+using Machine Learning models for predicting student's performance. They claim 
+that they were capable of predicting the final grade with an accuracy of 96\%. 
+With a final number of 2500 student records and about 10 attributes for each 
+record, they managed to predict the value of the final Grade attribute (which 
+is a Class Variable that can have 6 values: A, B+, B, C+, C, Fail). 
+Four classifier models were used in their study and we can see in Figure 
+\ref{fig.figure1}\cite{bibl_7} their performance: 
+
+\insfigshw{figure1.png}%
+    {Classifiers accuracy}%
+    {Classifiers accuracy}%
+    {fig.figure1}{0.8}

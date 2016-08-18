@@ -1,0 +1,228 @@
+\chapter{Model Design and Methods Used}
+
+\section{Getting and Pre-processing the Data}
+
+The data that was used in this thesis comes from our Computer Science 
+Undergraduate course, i.e. Analysis of Algorithms from $2^{nd}$ year during 
+the Fall 2015 semester. For that semester, we have a total record of 180 
+registered students, but we removed those whose attributes were not relevant. 
+Since we are interested in classifying students based on their exam grade, 
+also implying the classification in {\it passed} and {\it failed} classes, 
+we also removed those student that had a poor grade during the semester and 
+could not participate at the final exam. Having said this, we are left with a 
+total of 137 relevant student records. These records must further be split 
+into two sets: the training set - the set that is used for building the model 
+and the testing set - the set used for testing the accuracy and measure 
+the performance indicators of the model. There is not a standard recipe of 
+how to divide these two sets, but it is recommended that the training set 
+should have a proportion between 60\% and 80\% of the total dataset's number 
+of examples. 
+
+\subsection{Dataset Structure}
+
+In Table \ref{table_1} there is a listing with all the attributes (features) 
+used for the training models. There are a total of 10 initial features 
+(will address later on this problem with the number of features). The weight 
+characteristic of the features represents the actual maximum points that a 
+student can get from that assignment (they are all equal, summing for a total 
+of 5 semester points). This was not used in the project, since the value is 
+constant for all features. From the table, we can see that the range for the 
+test and homework grades is not the same. This was resolved by dividing the 
+test grades range with a factor of 20, in order to have a better uniformization 
+of the datased before applying standard pre-processing techniques that are 
+required from learning models.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{l*{10}{c}r}
+\toprule
+Feature            & Description & Type & Range & Weight \\
+\hline
+t\_1               & Test 1 grade & Float & 0-10 & 0.5 \\
+t\_2               & Test 2 grade & Float & 0-10 & 0.5 \\
+t\_3               & Test 3 grade & Float & 0-10 & 0.5 \\
+t\_4               & Test 4 grade & Float & 0-10 & 0.5 \\
+t\_5               & Test 5 grade & Float & 0-10 & 0.5 \\
+t\_6               & Test 6 grade & Float & 0-10 & 0.5 \\
+hw\_1              & Homework 1 grade & Float & 0-0.5 & 0.5 \\
+hw\_2              & Homework 2 grade & Float & 0-0.5 & 0.5 \\
+hw\_3              & Homework 3 grade & Float & 0-0.5 & 0.5 \\
+hw\_4              & Homework 4 grade & Float & 0-0.5 & 0.5 \\
+\bottomrule
+\end{tabular}
+\caption[Dataset Details]{Dataset Attribute Details}
+\label{table_1}
+\end{table}
+
+Next, we need to provide the values used for labelling the examples. Since this 
+thesis treats both classification and regression problems, different types of 
+labels must be present in the dataset. For classification, we use the final 
+grade (integer between 4 and 10) and the exam grade as integer values. For 
+regression, only the exam grade (which is a real number between 0 and 4) is 
+used and it will be represented as a float number. Table \ref{table_2} gives a 
+structured view of how the students dataset labels are used in the studied models.
+For classifying the students into 4 classes based on their exam points the 
+real continuous interval $(0, 4]$ was split into 4 equal subintervals and for 
+each subinterval was assigned a class label (0, 1, 2 and 3, respectively). 
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{cccc}
+\toprule
+\multicolumn{1}{c}{Problem type} & \multicolumn{3}{c}{Label Description} \\
+\cmidrule(r){2-4}
+                        & Label type  & Label Value & Label used \\
+\midrule
+Binary Classification   & Integer     & 0|1         & Final grade \\
+4-class Classification  & Integer     & 0|1|2|3     & Exam grade \\
+Regression              & Float       & 0.0-4.0     & Exam grade \\
+\bottomrule
+\end{tabular}
+\caption[Label Structure]{Label Structure}
+\label{table_2}
+\end{table}
+
+\subsection{Data Standardization}
+
+In Machine Learning, standardization of data is a common requierement for a 
+lot of models (e.g.: neural networks and SVMs). This means that, before 
+applying our learning models, we must first scale the features from our dataset. 
+This scaling implies that the data should have {\bf mean} 0 and {\bf standard 
+deviation} 1. This is done by subtracting the mean value of each feature, then 
+scale the data by dividing the features by their standard deviation (or variance, 
+because standard deviation is the square root of variance, so they are equal).
+
+\begin{equation}
+\centering
+X_{scaled} = \frac{X-\overline{X}}{\sigma}
+\end{equation}
+where $X$ is a vector of values from one feature, $\overline{X}$ is the mean of $X$ and 
+$\sigma$ represents the standard deviation of $X$.
+
+In Figure \ref{fig.figure2}\footnote{http://cs231n.github.io/neural-networks-2} we can 
+see a straight-forward visualization of how the data is represented before and after 
+the preprocessing techniques:
+
+\insfigshw{figure2.png}%
+    {Data preprocessing pipeline}%
+    {Data preprocessing pipeline}%
+    {fig.figure2}{0.8}
+
+It is worth noting that the mean and standard deviation values must come only 
+from the training data and the transformation must be done on both training and 
+testing sets, for meaningful results. The reason is that, in general, the built 
+Machine Learning model is applied on unseen data (on real-time data), which is 
+not available when the model is built. So, for accurate calculation on the 
+model's performance and generalization, we must restrict the computation of 
+mean and variance only on the training examples.
+
+\section{Using Polynomial Features}
+
+\subsection{Curse of Dimensionality}
+
+In general, the number of examples and the dimensionality of each example 
+(the number of features per example) are correlated, taking into consideration 
+the accuracy of the trained model. The {\it Hughes phenomenon}\cite{hughes} 
+tells us that if we have a constant number of training examples, the ability 
+of the model's prediction decreses when the dimensionality increses over an 
+optimal value. This is also called the {\bf Curse of Dimensionality} and it 
+can lead to {\it overfitting} the dataset - the model has a low power of 
+generalization. Finding the best number of features can be a very hard problem 
+(as it requires a lot of manual testing). Actually, this is an {\it intractable} 
+problem, because we need to generate all possible combinations of features and 
+find the optimal one. This could easily be avoided now by using Feature Selection 
+tools. For example, {\bf Random Forests} are very good models at selecting 
+features that provide the best accuracy to the model. This will be analyzed 
+with more details in the next sections of the thesis. 
+
+So, supposing that we have $M$ number of examples in the training set and 
+the feature tensor is one-dimensional, if we add another dimension to the 
+tensor (another feature), ideally, we need to square the training examples. 
+By induction, the number of training example grows exponentially with the 
+dimension of the feature tensor.
+
+Figure \ref{fig.figure3}\footnote{http://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/} shows a representation of how the number of feature dimensions 
+affects the quality of the learning model. It can be seen that keeping the 
+training examples constant and only increasing the number of features, the 
+accuracy drops by an exponential rate. 
+
+\insfigshw{figure3.png}%
+    {The Curse of Dimensionality}%
+    {The Curse of Dimensionality}%
+    {fig.figure3}{0.8}
+
+\subsection{Adding Complexity to the Model}
+
+There are situations in which is better to add complexity to our features. 
+For example, when our dataset in not linearly separable using one, two, or more 
+features, we can add extra dimensions to the feature tensor in order to make 
+that data separable. {\bf SVMs} make use of this approach, by using multiple 
+{\it kernel functions} that have the role to transform an input space in order 
+to easily process data. Intuitively, a kernel is a ``shortcut'' that allows us 
+to do certain computations, but without being directly involved in higher-dimensional 
+calculations. Kernels can be linear functions, polynomial functions or even sigmoid 
+functions. Using SVMs, we implicitly add complexity to our model.
+
+Having tested some simple models on the dataset, such as Linear Regression or the 
+Perceptron, adding some complexity to the models was not at all a bad idea. 
+A good method was the one of using {\bf Polynomial Features}, that combines the 
+initial features into new nonlinear features. Polynomial Features adds more 
+dimensions to the feature space, but the key here is that they are correlated, 
+so this can help in achieving better prediction accuracy. Here, there are two different 
+options to consider:
+
+\begin{itemize}
+  \item The first one is generating a list of features (a polynomial of a certain 
+  degree) from the current features. 
+  Example: If we have the input given as $(X_1, X_2)$, after the polynomial 
+  tranformation the example becomes $(1, X_1, X_2, X_1*X_2, X_1^2, X_2^2)$
+  \item The second approach was to consider only interactions between the 
+  features for building a polynomial with the same degree as the number of 
+  initial features.
+  Example: The features $(X_1, X_2, X_3)$ are tranformed by the polynomial 
+  into: $(1, X_1, X_2, X_3, X_1*X_2, X_1*X_3, X_2*X_3, X_1*X_2*X_3)$, resulting 
+  in a total of $2^{N}$ final features, where $N$ is the original dimension of 
+  the input space.
+\end{itemize}
+
+So, for Linear Regression, the input features are transformed using the first 
+method (to generate non-linear functions like polynomials of degree 2 or 3).
+This ``trick'' allows us to use simple linear models that are trained on actual 
+non-linear combinations of the data and are faster than other complex 
+non-linear models.
+Supposing that we want to train our student's dataset using Linear Regression 
+with Polynomial Features: 
+
+Let $\tilde{y}$ be the output vector of the linear model, $x$ the input tensor,
+$\omega \in \mathbb{R}^{M \cdot N}$ the coefficient tensor (a two-dimensional vector) 
+and $\beta$ the vector bias. The model computes the following equation, making use of 
+the ``least squares'' method for calculating 
+$\omega$ and $\beta$:
+\begin{equation}
+\label{lin_reg}
+\centering
+\tilde{y}(\omega, x) = \omega \cdot x + \beta
+\end{equation}
+where $x = (x_1,x_2,\dots,x_{10}).$
+When we add the polynomial features, $x$ is transformed like this:
+\begin{center}
+$x_{nonlinear} = (x_1,x_2,\dots,x_{10},\dots,x_i \cdot x_j,\dots,x_1^2,x_2^2,\dots,x_{10}^2);$ 
+ $i, j = \overline{1,10}, i < j$
+\end{center}
+The size of the new feature space is: $10+10+C_{10}^2=65$ \\
+Substituting $x_{nonlinear}$ in Equation \ref{lin_reg}, we obtain:
+\begin{equation}
+\centering
+\tilde{y}(\omega', x_{nonlinear}) = \omega' \cdot x_{nonlinear} + \beta'
+\end{equation}
+We can observe from the above equation that the linearity is still preserved and the 
+model can fit more complicated data now.
+
+On the other hand, the Perceptron model was tested using both methods, although the 
+second method turned to be more appropiate, i.e. the {\it interaction features} method. 
+This method was also used for the MLP\footnote{Multi-Layer Perceptron} neural network 
+model. With the size of the feature space of 10, adding interaction features 
+provided a total of $2^{10}=1024$ features.
+
+\section{Visualizing the dataset}
+
