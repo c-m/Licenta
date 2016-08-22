@@ -45,3 +45,6 @@ Analiza educationala
 Meta-model
     - Input: materie(AA/PP), features (must have constant dimension)
     - Output: predictions, statistics -> can make analysis
+
+
+=MID(B2&" "&B2,FIND(" ",B2)+1,LEN(B2))
