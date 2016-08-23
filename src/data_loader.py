@@ -4,6 +4,7 @@ import csv
 import numpy as np
 import os
 
+from collections import OrderedDict
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import LabelEncoder
@@ -12,8 +13,8 @@ from sklearn.preprocessing import StandardScaler
 
 
 DATA_PATH = '../data_sets/'
-GRADE_FEATURES_FILE = 'note_aa.csv'
-GRADE_LABELS_FILE = 'note_aa.data'
+GRADE_FEATURES_FILE = 'note_pp.csv'
+LOG_FEATURES_FILE = 'logs_pp.csv'
 TRAIN_TO_TEST_RATIO = 0.8
 
 
@@ -44,49 +45,77 @@ def load_grades():
 
 	program_path = os.path.abspath(os.path.dirname(__file__))
 
+	all_dataset = OrderedDict()
+
 	with open(os.path.join(program_path, DATA_PATH, GRADE_FEATURES_FILE)) as csv_file:
-		data = csv.reader(csv_file)
 		
-		line = next(data)
-		n_examples = int(line[0])
-		n_features = int(line[1])
-		feature_w = float(line[2])
-		test_adjustment_factor = int(line[3])
+		reader = csv.reader(csv_file)
+		fieldnames = reader.next()
 
-		feature_names = next(data)
+		for example in reader:
+			name = example[0]
+			all_dataset[name] = OrderedDict()
+			all_dataset[name]['features'] = OrderedDict()
+			for i in range(1, len(fieldnames)-2):
+				if fieldnames[i] != 'total':
+					all_dataset[name]['features'][fieldnames[i]] = example[i]
+			all_dataset[name]['labels'] = OrderedDict()
+			all_dataset[name]['labels'][fieldnames[-2]] = example[-2]
+			all_dataset[name]['labels'][fieldnames[-1]] = example[-1]
 
-		data_set = np.zeros((n_examples, n_features))
-		discrete_labels_set = np.zeros(n_examples)
+	n_examples = len(all_dataset)
+	n_total_features = len(all_dataset.values()[0]['features'])
 
-		for i, ex in enumerate(data):
-			data_set[i] = np.array(ex[:-1], dtype=np.float)
-			discrete_labels_set[i] = np.array(ex[-1], dtype=np.int)
 
-	with open(os.path.join(program_path, DATA_PATH, GRADE_LABELS_FILE)) as csv_file:
-		data = csv.reader(csv_file)
+	# data_set = np.zeros((n_examples, n_features))
+	# labels_set = np.zeros(n_examples)
 
-		continuous_labels_set = np.zeros((n_examples, 2))
+	# for i, ex in enumerate(data):
+	# 	data_set[i] = np.array(ex[:-1], dtype=np.float)
+	# 	discrete_labels_set[i] = np.array(ex[-1], dtype=np.int)
 
-		for i, ex in enumerate(data):
-			continuous_labels_set[i] = np.array(ex, dtype=np.float)
 
-	n_training = int(np.ceil(n_examples*TRAIN_TO_TEST_RATIO))
-	n_test = n_examples - n_training
+	with open(os.path.join(program_path, DATA_PATH, LOG_FEATURES_FILE)) as csv_file:
+		
+		reader = csv.reader(csv_file)
+		fieldnames = reader.next()
+
+		for example in reader:
+			name = example[0]
+			if name in all_dataset:
+				for i in range(1, len(fieldnames)):
+					all_dataset[name]['features'][fieldnames[i]] = example[i]
+
+	n_examples = len(all_dataset)
+	n_total_features = len(all_dataset.values()[0]['features'])
+
+	for k, v in all_dataset.iteritems():
+		print k, v
+	return all_dataset
+
+	# continuous_labels_set = np.zeros((n_examples, 2))
+
+	# for i, ex in enumerate(data):
+	# 	continuous_labels_set[i] = np.array(ex, dtype=np.float)
+
 	
-	train_data_set = data_set[:n_training]
-	test_data_set = data_set[n_training:]
-
-	train_discrete_labels_set = discrete_labels_set[:n_training]
-	test_discrete_labels_set = discrete_labels_set[n_training:]
-
-	train_continuous_labels_set = continuous_labels_set[:n_training]
-	test_continuous_labels_set = continuous_labels_set[n_training:]
+	# n_training = int(np.ceil(n_examples*TRAIN_TO_TEST_RATIO))
+	# n_test = n_examples - n_training
 	
-	return DatasetContaier(train_data=train_data_set, test_data=test_data_set,
-						   train_discrete_labels=train_discrete_labels_set, test_discrete_labels=test_discrete_labels_set,
-						   train_continuous_labels=train_continuous_labels_set, test_continuous_labels=test_continuous_labels_set,
-						   feature_weight=feature_w, test_factor=test_adjustment_factor,
-						   feature_names=feature_names)
+	# train_data_set = data_set[:n_training]
+	# test_data_set = data_set[n_training:]
+
+	# train_discrete_labels_set = discrete_labels_set[:n_training]
+	# test_discrete_labels_set = discrete_labels_set[n_training:]
+
+	# train_continuous_labels_set = continuous_labels_set[:n_training]
+	# test_continuous_labels_set = continuous_labels_set[n_training:]
+	
+	# return DatasetContaier(train_data=train_data_set, test_data=test_data_set,
+	# 					   train_discrete_labels=train_discrete_labels_set, test_discrete_labels=test_discrete_labels_set,
+	# 					   train_continuous_labels=train_continuous_labels_set, test_continuous_labels=test_continuous_labels_set,
+	# 					   feature_weight=feature_w, test_factor=test_adjustment_factor,
+	# 					   feature_names=feature_names)
 
 
 def preprocess_data(data, poly_features=False):
@@ -148,7 +177,7 @@ def preprocess_data(data, poly_features=False):
 def main():
 	students_data = load_grades()
 	#print students_data['test_data']
-
+'''
 	students_data = preprocess_data(students_data, poly_features=False)
 	#print students_data['test_data'][0]
 
@@ -177,6 +206,6 @@ def main():
 	plt.axis([2, 7, -1, 2])
 	plt.legend()
 	plt.show()
-
+'''
 if __name__ == '__main__':
 	main()
