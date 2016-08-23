@@ -46,6 +46,7 @@ def load_grades():
 	program_path = os.path.abspath(os.path.dirname(__file__))
 
 	all_dataset = OrderedDict()
+	logs_dataset = OrderedDict()
 
 	with open(os.path.join(program_path, DATA_PATH, GRADE_FEATURES_FILE)) as csv_file:
 		
@@ -58,10 +59,28 @@ def load_grades():
 			all_dataset[name]['features'] = OrderedDict()
 			for i in range(1, len(fieldnames)-2):
 				if fieldnames[i] != 'total':
-					all_dataset[name]['features'][fieldnames[i]] = example[i]
+					all_dataset[name]['features'][fieldnames[i]] = float(example[i])
+
+			# aggregate some of the features(hw, tests, past results) 
+			# to try a generalization of the model (e.g.: apply it to other 
+			# courses, even if they're different)
+			all_dataset[name]['features']['hw_avg'] = float('%.3f' % \
+				((all_dataset[name]['features']['hw_1'] + \
+				  all_dataset[name]['features']['hw_2'] + \
+				  all_dataset[name]['features']['hw_3']) / 3))
+			all_dataset[name]['features']['t_avg'] = float('%.3f' % \
+				(((all_dataset[name]['features']['t_1'] + \
+				   all_dataset[name]['features']['t_2'] + \
+				   all_dataset[name]['features']['t_3'] + \
+				   all_dataset[name]['features']['t_4'] / 4) + \
+				   all_dataset[name]['features']['t_f']) / 2))
+			all_dataset[name]['features']['past_results_avg'] = float('%.3f' % \
+				((all_dataset[name]['features']['PC_grade'] + \
+				  all_dataset[name]['features']['AA_grade']) / 2))
+
 			all_dataset[name]['labels'] = OrderedDict()
-			all_dataset[name]['labels'][fieldnames[-2]] = example[-2]
-			all_dataset[name]['labels'][fieldnames[-1]] = example[-1]
+			all_dataset[name]['labels'][fieldnames[-2]] = float(example[-2])
+			all_dataset[name]['labels'][fieldnames[-1]] = float(example[-1])
 
 	n_examples = len(all_dataset)
 	n_total_features = len(all_dataset.values()[0]['features'])
@@ -82,9 +101,12 @@ def load_grades():
 
 		for example in reader:
 			name = example[0]
+			logs_dataset[name] = OrderedDict()
 			if name in all_dataset:
 				for i in range(1, len(fieldnames)):
-					all_dataset[name]['features'][fieldnames[i]] = example[i]
+					all_dataset[name]['features'][fieldnames[i]] = float(example[i])
+			for i in range(1, len(fieldnames)):
+				logs_dataset[name][fieldnames[i]] = float(example[i])
 
 	n_examples = len(all_dataset)
 	n_total_features = len(all_dataset.values()[0]['features'])
