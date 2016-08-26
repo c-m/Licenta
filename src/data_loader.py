@@ -243,41 +243,45 @@ def preprocess_data(data, poly_features=False):
 	#PCA visualization
 	plot_pca = True
 	if plot_pca:
-		pca = PCA(n_components=2)
+		pca = PCA(n_components=3)
 		all_examples = np.vstack((train_data, test_data))
-		X_r = pca.fit(all_examples).transform(all_examples)
+		print all_examples
+		pca.fit(all_examples)
+		X_r = pca.transform(all_examples)
 
 		print pca.components_
 		# Percentage of variance explained for each components
 		print('explained variance ratio (first two components): %s'
       		  % str(pca.explained_variance_ratio_))
-		plt.figure()
+		#plt.figure()
 		target_names = ['failed', 'passed']
 		y = np.hstack((data['train_labels'][:,0], data['test_labels'][:,0]))
+		print y
 		#transform final_grades for binary classification (failed/passed)
 		y[y < 5] = 0
 		y[y >= 5] = 1
-		for c, i, target_name in zip("rg", [0, 1], target_names):
-			plt.scatter(X_r[y == i, 0], X_r[y == i, 1], c=c, label=target_name)
-		plt.legend()
-		plt.title('PCA of PP students dataset')
-		plt.show()
+		print y
+		# for c, i, target_name in zip("rg", [0, 1], target_names):
+		# 	plt.scatter(X_r[y == i, 0], X_r[y == i, 1], c=c, label=target_name)
+		# plt.legend()
+		# plt.title('PCA of PP students dataset')
+		# plt.show()
 
 		# To getter a better understanding of interaction of the dimensions
 		# plot the first three PCA dimensions
-		# fig = plt.figure(1, figsize=(8, 6))
-		# ax = Axes3D(fig, elev=-150, azim=110)
-		# ax.scatter(X_r[:, 0], X_r[:, 1], X_r[:, 2], c=y,
-		#            cmap=plt.cm.Paired)
-		# ax.set_title("First three PCA directions")
-		# ax.set_xlabel("1st eigenvector")
-		# ax.w_xaxis.set_ticklabels([])
-		# ax.set_ylabel("2nd eigenvector")
-		# ax.w_yaxis.set_ticklabels([])
-		# ax.set_zlabel("3rd eigenvector")
-		# ax.w_zaxis.set_ticklabels([])
+		fig = plt.figure(1, figsize=(8, 6))
+		ax = Axes3D(fig, elev=-150, azim=110)
+		ax.scatter(X_r[:, 0], X_r[:, 1], X_r[:, 2], c=y,
+		           cmap=plt.cm.Paired)
+		ax.set_title("First three PCA directions")
+		ax.set_xlabel("1st eigenvector")
+		ax.w_xaxis.set_ticklabels([])
+		ax.set_ylabel("2nd eigenvector")
+		ax.w_yaxis.set_ticklabels([])
+		ax.set_zlabel("3rd eigenvector")
+		ax.w_zaxis.set_ticklabels([])
 
-		# plt.show()
+		plt.show()
 
 	#scale the dataset to have the mean=0 and variance=1
 	scaler = StandardScaler()
@@ -302,7 +306,7 @@ def main():
 	all_dataset = students_data[0]
 	logs_dataset = students_data[1]
 
-	option = Options.LOGS_ONLY
+	option = Options.AGG_GRADES_ONLY
 	if option == Options.LOGS_ONLY:
 		data = get_data(option, logs_dataset)
 	else:

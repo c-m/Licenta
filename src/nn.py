@@ -3,7 +3,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from data_loader import load_grades, preprocess_data
+from data_loader import get_data, load_data, preprocess_data, Options
 from sklearn.metrics import confusion_matrix, hamming_loss, brier_score_loss, log_loss
 from sklearn.metrics import mean_absolute_error, mean_squared_error, median_absolute_error, r2_score
 from sklearn.neural_network import MLPClassifier, MLPRegressor
@@ -132,8 +132,8 @@ def nn_binary_classifier(data):
 	
 	X_nn = data['train_data']
 	X_nn_test = data['test_data']
-	Y_nn = data['train_discrete_labels']
-	Y_nn_test = data['test_discrete_labels']
+	Y_nn = data['train_labels'][:,0]
+	Y_nn_test = data['test_labels'][:,0]
 
 	#transform Y_nn and Y_nn_test 
 	Y_nn[Y_nn < 5] = 0
@@ -226,11 +226,21 @@ def nn_regressor(data):
 
 
 def main():
-	students_data_set = load_grades()
-	students_data_set = preprocess_data(students_data_set, poly_features=True)
+
+	students_data = load_data()
+	all_dataset = students_data[0]
+	logs_dataset = students_data[1]
+
+	option = Options.AGG_GRADES_ONLY
+	if option == Options.LOGS_ONLY:
+	    data = get_data(option, logs_dataset)
+	else:
+	    data = get_data(option, all_dataset)
+
+	data = preprocess_data(data, poly_features=False)
 
 	#binary classificication based on final grade
-	nn_binary_classifier(students_data_set)
+	nn_binary_classifier(data)
 
 	#4-class classification based on exam grade
 	# nn_classifier(students_data_set)
