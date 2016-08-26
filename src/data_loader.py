@@ -6,16 +6,31 @@ import os
 
 from collections import OrderedDict
 from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.preprocessing import StandardScaler
 
-
 DATA_PATH = '../data_sets/'
 GRADE_FEATURES_FILE = 'note_pp.csv'
 LOG_FEATURES_FILE = 'logs_pp.csv'
 TRAIN_TO_TEST_RATIO = 0.8
+
+# SILLY HACK - global vars
+GRADE_FIELDS = list()
+LOG_FIELDS = list()
+
+class Options(object):
+
+	GRADES_ONLY = 'grades_only' # hw_1,hw_2,hw_3,t_1,t_2,t_3,t_4,t_f,lab,lecture,aa_grade,pc_grade
+	LOGS_ONLY = 'logs_only' # x1,x2,x3,x4 - all logs, even those without labels. UNLABELED
+	AGG_GRADES_ONLY = 'agg_grades_only' # hw_avg,t_avg,past_results_avg,lab,lecture
+	ALL_FEATURES = 'all_features' # GRADES_ONLY + LOGS_ONLY (intersection of sets, by name as key)
+	ALL_FEATURES_AGG = 'all_features_agg' # AGG_GRADES_ONLY + LOGS_ONLY (as above)
+
+	def __init__(self):
+		pass
 
 
 class DatasetContaier(dict):
@@ -39,8 +54,8 @@ class DatasetContaier(dict):
 		pass
 
 
-def load_grades():
-	"""Load and return student grades dataset from files
+def load_data():
+	"""Load and return students' data dataset from .csv files
 	"""
 
 	program_path = os.path.abspath(os.path.dirname(__file__))
@@ -48,11 +63,13 @@ def load_grades():
 	all_dataset = OrderedDict()
 	logs_dataset = OrderedDict()
 
+	global GRADE_FIELDS, LOG_FIELDS
+
 	with open(os.path.join(program_path, DATA_PATH, GRADE_FEATURES_FILE)) as csv_file:
 		
 		reader = csv.reader(csv_file)
 		fieldnames = reader.next()
-
+		GRADE_FIELDS = fieldnames
 		for example in reader:
 			name = example[0]
 			all_dataset[name] = OrderedDict()
@@ -72,7 +89,7 @@ def load_grades():
 				(((all_dataset[name]['features']['t_1'] + \
 				   all_dataset[name]['features']['t_2'] + \
 				   all_dataset[name]['features']['t_3'] + \
-				   all_dataset[name]['features']['t_4'] / 4) + \
+				   all_dataset[name]['features']['t_4']) / 4 + \
 				   all_dataset[name]['features']['t_f']) / 2))
 			all_dataset[name]['features']['past_results_avg'] = float('%.3f' % \
 				((all_dataset[name]['features']['PC_grade'] + \
@@ -82,22 +99,11 @@ def load_grades():
 			all_dataset[name]['labels'][fieldnames[-2]] = float(example[-2])
 			all_dataset[name]['labels'][fieldnames[-1]] = float(example[-1])
 
-	n_examples = len(all_dataset)
-	n_total_features = len(all_dataset.values()[0]['features'])
-
-
-	# data_set = np.zeros((n_examples, n_features))
-	# labels_set = np.zeros(n_examples)
-
-	# for i, ex in enumerate(data):
-	# 	data_set[i] = np.array(ex[:-1], dtype=np.float)
-	# 	discrete_labels_set[i] = np.array(ex[-1], dtype=np.int)
-
-
 	with open(os.path.join(program_path, DATA_PATH, LOG_FEATURES_FILE)) as csv_file:
 		
 		reader = csv.reader(csv_file)
 		fieldnames = reader.next()
+		LOG_FIELDS = fieldnames
 
 		for example in reader:
 			name = example[0]
@@ -111,33 +117,119 @@ def load_grades():
 	n_examples = len(all_dataset)
 	n_total_features = len(all_dataset.values()[0]['features'])
 
-	for k, v in all_dataset.iteritems():
-		print k, v
-	return all_dataset
+	# for k, v in all_dataset.iteritems():
+	# 	print k, v
 
-	# continuous_labels_set = np.zeros((n_examples, 2))
-
-	# for i, ex in enumerate(data):
-	# 	continuous_labels_set[i] = np.array(ex, dtype=np.float)
-
+	return (all_dataset, logs_dataset)
 	
-	# n_training = int(np.ceil(n_examples*TRAIN_TO_TEST_RATIO))
-	# n_test = n_examples - n_training
-	
-	# train_data_set = data_set[:n_training]
-	# test_data_set = data_set[n_training:]
 
-	# train_discrete_labels_set = discrete_labels_set[:n_training]
-	# test_discrete_labels_set = discrete_labels_set[n_training:]
+def get_data(option, dataset):
 
-	# train_continuous_labels_set = continuous_labels_set[:n_training]
-	# test_continuous_labels_set = continuous_labels_set[n_training:]
-	
-	# return DatasetContaier(train_data=train_data_set, test_data=test_data_set,
-	# 					   train_discrete_labels=train_discrete_labels_set, test_discrete_labels=test_discrete_labels_set,
-	# 					   train_continuous_labels=train_continuous_labels_set, test_continuous_labels=test_continuous_labels_set,
-	# 					   feature_weight=feature_w, test_factor=test_adjustment_factor,
-	# 					   feature_names=feature_names)
+	n_examples = len(dataset)
+	names = dataset.keys()
+
+	if option == Options.LOGS_ONLY:
+		n_total_features = len(dataset.values()[0])
+	else:
+		n_total_features = len(dataset.values()[0]['features'])
+
+	if option == Options.GRADES_ONLY:
+		n_features = 12
+
+		dataset_out = np.zeros((n_examples, n_features))
+		labels_out = np.zeros((n_examples, 2))
+
+		feature_names = list()
+		feature_names = filter(lambda x: x != 'total', GRADE_FIELDS[1:n_features+2])
+
+		for i, v in enumerate(dataset.itervalues()):
+			features = v['features'].values()[:n_features]
+			labels = v['labels'].values()
+			dataset_out[i] = np.array(features, dtype=np.float)
+			labels_out[i] = np.array(labels, dtype=np.float)
+	elif option == Options.AGG_GRADES_ONLY:
+		n_features = 5
+
+		dataset_out = np.zeros((n_examples, n_features))
+		labels_out = np.zeros((n_examples, 2))
+
+		feature_names = ['lab', 'lecture', 'hw_avg', 't_avg', 'past_results_avg']
+
+		for i, v in enumerate(dataset.itervalues()):
+			features = list()
+			for f_name in feature_names:
+				if f_name in v['features']:
+					features.append(v['features'][f_name])
+			labels = v['labels'].values()
+			dataset_out[i] = np.array(features, dtype=np.float)
+			labels_out[i] = np.array(labels, dtype=np.float)
+	elif option == Options.ALL_FEATURES:
+		n_features = n_total_features - 3
+
+		dataset_out = np.zeros((n_examples, n_features))
+		labels_out = np.zeros((n_examples, 2))
+
+		feature_names = list()
+		feature_names = filter(lambda x: x != 'avg' and x != 'total', GRADE_FIELDS[1:-2])
+		feature_names += LOG_FIELDS[1:]
+
+		for i, v in enumerate(dataset.itervalues()):
+			features = list()
+			for f_name in feature_names:
+				if f_name in v['features']:
+					features.append(v['features'][f_name])
+			labels = v['labels'].values()
+			dataset_out[i] = np.array(features, dtype=np.float)
+			labels_out[i] = np.array(labels, dtype=np.float)
+	elif option == Options.ALL_FEATURES_AGG:
+		n_features = 9
+
+		dataset_out = np.zeros((n_examples, n_features))
+		labels_out = np.zeros((n_examples, 2))
+
+		feature_names = ['lab', 'lecture', 'hw_avg', 't_avg', 'past_results_avg']
+		feature_names += LOG_FIELDS[1:]
+
+		for i, v in enumerate(dataset.itervalues()):
+			features = list()
+			for f_name in feature_names:
+				if f_name in v['features']:
+					features.append(v['features'][f_name])
+			labels = v['labels'].values()
+			dataset_out[i] = np.array(features, dtype=np.float)
+			labels_out[i] = np.array(labels, dtype=np.float)
+	elif option == Options.LOGS_ONLY:
+		n_features = n_total_features
+
+		dataset_out = np.zeros((n_examples, n_features))
+		feature_names = LOG_FIELDS[1:]
+
+		for i, v in enumerate(dataset.itervalues()):
+			features = v.values()[:n_features]
+			dataset_out[i] = np.array(features, dtype=np.float)
+
+	if option != Options.LOGS_ONLY:
+		n_training = int(np.ceil(n_examples*TRAIN_TO_TEST_RATIO))
+		n_test = n_examples - n_training
+		
+		train_data_set = dataset_out[:n_training]
+		test_data_set = dataset_out[n_training:]
+
+		train_labels_set = labels_out[:n_training]
+		test_labels_set = labels_out[n_training:]
+
+		#print labels_out.shape
+		#print labels_out[labels_out[:,0]>=4].shape
+		#print dataset_out
+		#print labels_out
+
+		return DatasetContaier(train_data=train_data_set, test_data=test_data_set,
+	 					       train_labels=train_labels_set, test_labels=test_labels_set,
+	 					       feature_names=feature_names, example_names=names)
+	else:
+		return DatasetContaier(data_set=dataset_out, 
+							   feature_names=feature_names, 
+			                   example_names=names)
 
 
 def preprocess_data(data, poly_features=False):
@@ -148,35 +240,44 @@ def preprocess_data(data, poly_features=False):
 	train_data = data['train_data']
 	test_data = data['test_data']
 
-	i = 0
-	for feature in data['feature_names']:
-		if feature[0] == 't':
-			train_data[:,i] /= data['test_factor']
-			test_data[:,i] /= data['test_factor']
-		i += 1
-
 	#PCA visualization
 	plot_pca = True
 	if plot_pca:
 		pca = PCA(n_components=2)
 		all_examples = np.vstack((train_data, test_data))
-		X_r  = pca.fit(all_examples).transform(all_examples)
-		print all_examples
+		X_r = pca.fit(all_examples).transform(all_examples)
+
 		print pca.components_
 		# Percentage of variance explained for each components
 		print('explained variance ratio (first two components): %s'
       		  % str(pca.explained_variance_ratio_))
 		plt.figure()
 		target_names = ['failed', 'passed']
-		y = np.hstack((data['train_discrete_labels'], data['test_discrete_labels']))
+		y = np.hstack((data['train_labels'][:,0], data['test_labels'][:,0]))
 		#transform final_grades for binary classification (failed/passed)
 		y[y < 5] = 0
 		y[y >= 5] = 1
 		for c, i, target_name in zip("rg", [0, 1], target_names):
 			plt.scatter(X_r[y == i, 0], X_r[y == i, 1], c=c, label=target_name)
 		plt.legend()
-		plt.title('PCA of students dataset')
+		plt.title('PCA of PP students dataset')
 		plt.show()
+
+		# To getter a better understanding of interaction of the dimensions
+		# plot the first three PCA dimensions
+		# fig = plt.figure(1, figsize=(8, 6))
+		# ax = Axes3D(fig, elev=-150, azim=110)
+		# ax.scatter(X_r[:, 0], X_r[:, 1], X_r[:, 2], c=y,
+		#            cmap=plt.cm.Paired)
+		# ax.set_title("First three PCA directions")
+		# ax.set_xlabel("1st eigenvector")
+		# ax.w_xaxis.set_ticklabels([])
+		# ax.set_ylabel("2nd eigenvector")
+		# ax.w_yaxis.set_ticklabels([])
+		# ax.set_zlabel("3rd eigenvector")
+		# ax.w_zaxis.set_ticklabels([])
+
+		# plt.show()
 
 	#scale the dataset to have the mean=0 and variance=1
 	scaler = StandardScaler()
@@ -197,37 +298,33 @@ def preprocess_data(data, poly_features=False):
 
 
 def main():
-	students_data = load_grades()
-	#print students_data['test_data']
-'''
-	students_data = preprocess_data(students_data, poly_features=False)
-	#print students_data['test_data'][0]
+	students_data = load_data()
+	all_dataset = students_data[0]
+	logs_dataset = students_data[1]
 
-	sum_features = np.hstack((students_data['train_continuous_labels'][:,0], students_data['test_continuous_labels'][:,0]))
-	exam_grades = np.hstack((students_data['train_continuous_labels'][:,1], students_data['test_continuous_labels'][:,1]))
-	sum_features = sum_features - exam_grades
-	final_grades = np.hstack((students_data['train_discrete_labels'], students_data['test_discrete_labels']))
+	option = Options.LOGS_ONLY
+	if option == Options.LOGS_ONLY:
+		data = get_data(option, logs_dataset)
+	else:
+		data = get_data(option, all_dataset)
 
-	#transform final_grades for binary classification (failed/passed)
-	final_grades[final_grades < 5] = 0
-	final_grades[final_grades >= 5] = 1
+	data = preprocess_data(data, poly_features=False)	
 
-	#transform exam_grades to match the four classes (0-1,1-2,2-3,3-4)
-	exam_grades = np.ceil(exam_grades)
+	# plot labels
+	exam_grades = np.hstack((data['train_labels'][:,0], data['test_labels'][:,0]))
+	final_grades = np.hstack((data['train_labels'][:,1], data['test_labels'][:,1]))
 
-	#Encode labels to values: 0,1,2,3
-	le = LabelEncoder()
-	le.fit(exam_grades)
-	exam_grades = le.transform(exam_grades)
+	final_grades = np.round(final_grades)
+	exam_grades = np.round(exam_grades)
 
-
-	plt.xlabel("sum(features) == semester points")
-	plt.ylabel("exam_grade")
-	plot_data = plt.plot(sum_features, final_grades, 'ro', 
-						 label = 'Final grades based on semester points\n0=failed, 1=passed')
-	plt.axis([2, 7, -1, 2])
+	plt.xlabel("exam_grade")
+	plt.ylabel("final_grade")
+	plot_data = plt.plot(exam_grades, final_grades, 'bs', 
+						 label = 'Exam grades vs final grades')
+	plt.plot(range(0,12), 'r--')
+	plt.axis([0, 11, 0, 11])
 	plt.legend()
 	plt.show()
-'''
+
 if __name__ == '__main__':
 	main()
