@@ -28,6 +28,7 @@ class Options(object):
 	AGG_GRADES_ONLY = 'agg_grades_only' # hw_avg,t_avg,past_results_avg,lab,lecture
 	ALL_FEATURES = 'all_features' # GRADES_ONLY + LOGS_ONLY (intersection of sets, by name as key)
 	ALL_FEATURES_AGG = 'all_features_agg' # AGG_GRADES_ONLY + LOGS_ONLY (as above)
+	ALL_LOGS = 'all_logs' # LOGS_ONLY. LABELED
 
 	def __init__(self):
 		pass
@@ -207,6 +208,23 @@ def get_data(option, dataset):
 		for i, v in enumerate(dataset.itervalues()):
 			features = v.values()[:n_features]
 			dataset_out[i] = np.array(features, dtype=np.float)
+	elif option == Options.ALL_LOGS:
+		n_features = 4
+
+		dataset_out = np.zeros((n_examples, n_features))
+		labels_out = np.zeros((n_examples, 2))
+
+		feature_names = LOG_FIELDS[1:]
+
+		for i, v in enumerate(dataset.itervalues()):
+			features = list()
+			for f_name in feature_names:
+				if f_name in v['features']:
+					features.append(v['features'][f_name])
+			labels = v['labels'].values()
+			dataset_out[i] = np.array(features, dtype=np.float)
+			labels_out[i] = np.array(labels, dtype=np.float)
+		print dataset_out
 
 	if option != Options.LOGS_ONLY:
 		n_training = int(np.ceil(n_examples*TRAIN_TO_TEST_RATIO))
@@ -306,7 +324,7 @@ def main():
 	all_dataset = students_data[0]
 	logs_dataset = students_data[1]
 
-	option = Options.AGG_GRADES_ONLY
+	option = Options.ALL_LOGS
 	if option == Options.LOGS_ONLY:
 		data = get_data(option, logs_dataset)
 	else:

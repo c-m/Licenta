@@ -166,24 +166,25 @@ def nn_classifier(data):
     
 	X_nn = data['train_data']
 	X_nn_test = data['test_data']
-	Y_nn = data['train_continuous_labels'][:,1]
-	Y_nn_test = data['test_continuous_labels'][:,1]
+	Y_nn = data['train_labels'][:,0]
+	Y_nn_test = data['test_labels'][:,0]
 
 	#transform Y_nn and Y_nn_test
 	Y_nn = np.ceil(Y_nn)
 	Y_nn_test = np.ceil(Y_nn_test)
+	print Y_nn
 
 	#Encode labels to values: 0,1,2,3
 	le = LabelEncoder()
-	le.fit(Y_nn)
-	le.fit(Y_nn_test)
+	#le.fit(Y_nn)
+	#le.fit(Y_nn_test)
 
-	Y_nn = le.transform(Y_nn)
-	Y_nn_test = le.transform(Y_nn_test)
+	Y_nn = le.fit_transform(Y_nn)
+	Y_nn_test = le.fit_transform(Y_nn_test)
 
-	clf = MLPClassifier(algorithm='adam', 
+	clf = MLPClassifier(algorithm='sgd', 
 						alpha=1e-5,
-						activation='tanh',
+						activation='relu',
 						hidden_layer_sizes=(100,),
 						random_state=0,
 						max_iter=500,
@@ -205,12 +206,12 @@ def nn_regressor(data):
 
 	X_nn = data['train_data']
 	X_nn_test = data['test_data']
-	Y_nn = data['train_continuous_labels'][:,1]
-	Y_nn_test = data['test_continuous_labels'][:,1]
+	Y_nn = data['train_labels'][:,0]
+	Y_nn_test = data['test_labels'][:,0]
 	
 	clf = MLPRegressor(algorithm='sgd', 
 						alpha=1e-5,
-						activation='tanh',
+						activation='relu',
 						hidden_layer_sizes=(100,),
 						random_state=1,
 						max_iter=500,
@@ -231,7 +232,7 @@ def main():
 	all_dataset = students_data[0]
 	logs_dataset = students_data[1]
 
-	option = Options.AGG_GRADES_ONLY
+	option = Options.ALL_FEATURES_AGG
 	if option == Options.LOGS_ONLY:
 	    data = get_data(option, logs_dataset)
 	else:
@@ -240,13 +241,13 @@ def main():
 	data = preprocess_data(data, poly_features=False)
 
 	#binary classificication based on final grade
-	nn_binary_classifier(data)
+	#nn_binary_classifier(data)
 
 	#4-class classification based on exam grade
-	# nn_classifier(students_data_set)
+	#nn_classifier(data)
 
 	#regression for exam_grades using MLPRegressor() class
-	#nn_regressor(students_data_set)
+	nn_regressor(data)
 
 
 if __name__ == '__main__':

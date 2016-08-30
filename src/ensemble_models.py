@@ -4,7 +4,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from data_loader import load_grades, preprocess_data
+from data_loader import get_data, load_data, preprocess_data, Options
 from nn import LABEL_NAMES_BIN, LABEL_NAMES_MULT
 from nn import model_eval, regressor_eval, plot_confusion_matrix
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
@@ -16,8 +16,8 @@ def random_forest_clf(data):
 
     X_train = data['train_data']
     X_test = data['test_data']
-    Y_train = data['train_discrete_labels']
-    Y_test = data['test_discrete_labels']
+    Y_train = data['train_labels'][:,0]
+    Y_test = data['test_labels'][:,0]
 
     #transform Y_nn and Y_nn_test 
     Y_train[Y_train < 5] = 0
@@ -28,7 +28,7 @@ def random_forest_clf(data):
 
     #max_features values: sqrt(n_features)/2, sqrt(n_features), 2*sqrt(n_features)
     #n_features == sqrt(10) ~ 3.16
-    clf = RandomForestClassifier(n_estimators=10, max_features=5, oob_score=True)
+    clf = RandomForestClassifier(n_estimators=10, max_features=3, oob_score=True)
     clf.fit(X_train, Y_train)
 
     importances = clf.feature_importances_
@@ -41,7 +41,8 @@ def random_forest_clf(data):
     print("Feature ranking:")
 
     for f in range(X_train.shape[1]):
-        print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
+        print("%d. feature %d, name: %s, (%f)" % \
+            (f + 1, indices[f], data['feature_names'][indices[f]], importances[indices[f]]))
 
     # Plot the feature importances of the forest
     plt.figure()
@@ -60,8 +61,8 @@ def random_forest_regr(data):
 
     X_train = data['train_data']
     X_test = data['test_data']
-    Y_train = data['train_continuous_labels'][:,1]
-    Y_test = data['test_continuous_labels'][:,1]
+    Y_train = data['train_labels'][:,0]
+    Y_test = data['test_labels'][:,0]
 
     regr = RandomForestRegressor(n_estimators=10, max_features='auto')
     regr.fit(X_train, Y_train)
@@ -76,7 +77,8 @@ def random_forest_regr(data):
     print("Feature ranking:")
 
     for f in range(X_train.shape[1]):
-        print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
+        print("%d. feature %d, name: %s, (%f)" % \
+            (f + 1, indices[f], data['feature_names'][indices[f]], importances[indices[f]]))
 
     # Plot the feature importances of the forest
     plt.figure()
@@ -166,21 +168,30 @@ def adaboost_regr(data):
 
 
 def main():
-    students_data_set = load_grades()
-    students_data_set = preprocess_data(students_data_set, poly_features=False)
+    students_data = load_data()
+    all_dataset = students_data[0]
+    logs_dataset = students_data[1]
+
+    option = Options.ALL_FEATURES_AGG
+    if option == Options.LOGS_ONLY:
+        data = get_data(option, logs_dataset)
+    else:
+        data = get_data(option, all_dataset)
+
+    data = preprocess_data(data, poly_features=False)
 
     #classification with RandomForestClassifier
-    #random_forest_clf(students_data_set)
+    #random_forest_clf(data)
 
     #regression with RandomForestRegressor
-    #random_forest_regr(students_data_set)
+    random_forest_regr(data)
 
     #classification with AdaBoostClassifier
     #adaboost_clf(students_data_set)
 
     #regression with AdaBoostRegressor
     #for i in range(10):
-    adaboost_regr(students_data_set)
+    #adaboost_regr(students_data_set)
 
 
 if __name__ == '__main__':

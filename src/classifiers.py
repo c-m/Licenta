@@ -52,14 +52,14 @@ def model_eval(clf, X_nn, Y_nn, X_nn_test, Y_nn_test, label_names):
 
 
 def perceptron_classification():
-    """Classification using the Perceptron algorithm and polynomial features
+    """Classification using the Perceptron algorithm (and polynomial features)
     """
 
     students_data = load_data()
     all_dataset = students_data[0]
     logs_dataset = students_data[1]
 
-    option = Options.AGG_GRADES_ONLY
+    option = Options.ALL_FEATURES_AGG
     if option == Options.LOGS_ONLY:
         data = get_data(option, logs_dataset)
     else:

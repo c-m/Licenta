@@ -3,7 +3,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from data_loader import load_grades, preprocess_data
+from data_loader import get_data, load_data, preprocess_data, Options
 from nn import regressor_eval
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.metrics import mean_absolute_error, mean_squared_error, median_absolute_error, r2_score
@@ -14,17 +14,26 @@ def polynomial_regression():
     """Polynomial regression using polynomial features and Linear Regression model
     """
 
-    students_data_set = load_grades()
-    students_data_set = preprocess_data(students_data_set, poly_features=False)
+    students_data = load_data()
+    all_dataset = students_data[0]
+    logs_dataset = students_data[1]
 
-    X_train = students_data_set['train_data']
-    X_test = students_data_set['test_data']
+    option = Options.ALL_FEATURES_AGG
+    if option == Options.LOGS_ONLY:
+        data = get_data(option, logs_dataset)
+    else:
+        data = get_data(option, all_dataset)
 
-    Y_train = students_data_set['train_continuous_labels'][:,1]
-    Y_test = students_data_set['test_continuous_labels'][:,1]
+    data = preprocess_data(data, poly_features=False)
+
+    X_train = data['train_data']
+    X_test = data['test_data']
+
+    Y_train = data['train_labels'][:,0]
+    Y_test = data['test_labels'][:,0]
 
     #construct polynomial features from the coefficients
-    poly = PolynomialFeatures(degree=3, interaction_only=False)
+    poly = PolynomialFeatures(degree=2, interaction_only=False)
     X_train = poly.fit_transform(X_train)
     X_test = poly.fit_transform(X_test)
 
@@ -38,6 +47,7 @@ def polynomial_regression():
     print '----------LinearRegression----------'
     print 'Coefficients: \n', regr.coef_
     regressor_eval(regr, X_train, Y_train, X_test, Y_test)
+
     print '----------Ridge----------'
     print 'Coefficients: \n', ridge_regr.coef_
     regressor_eval(ridge_regr, X_train, Y_train, X_test, Y_test)
