@@ -11,7 +11,7 @@ from sklearn.preprocessing import LabelEncoder
 
 
 LABEL_NAMES_BIN = ['failed', 'passed']
-LABEL_NAMES_MULT = ['0-1', '1-2', '2-3', '3-4']
+LABEL_NAMES_MULT = ['0-4', '5-7', '8-10']
 
 
 def plot_confusion_matrix(cm, label_names, title='Confusion matrix', cmap=plt.cm.Blues):
@@ -132,8 +132,8 @@ def nn_binary_classifier(data):
 	
 	X_nn = data['train_data']
 	X_nn_test = data['test_data']
-	Y_nn = data['train_labels'][:,0]
-	Y_nn_test = data['test_labels'][:,0]
+	Y_nn = data['train_labels'][:,1]
+	Y_nn_test = data['test_labels'][:,1]
 
 	#transform Y_nn and Y_nn_test 
 	Y_nn[Y_nn < 5] = 0
@@ -160,8 +160,8 @@ def nn_binary_classifier(data):
 
 
 def nn_classifier(data):
-	"""Classify students data in four classes based on the final 
-	exam grade, which is a real number between 0.0 and 4.0.
+	"""Classify students data in three classes based on the final or 
+	exam grade, which is a real number between 0.0 and 10.0.
 	"""
     
 	X_nn = data['train_data']
@@ -169,29 +169,41 @@ def nn_classifier(data):
 	Y_nn = data['train_labels'][:,0]
 	Y_nn_test = data['test_labels'][:,0]
 
-	#transform Y_nn and Y_nn_test
-	Y_nn = np.ceil(Y_nn)
-	Y_nn_test = np.ceil(Y_nn_test)
+	# print Y_nn
+	# print Y_nn_test
+
+	Y_nn_list = Y_nn.tolist()
+	Y_nn_test_list = Y_nn_test.tolist()
+	for i in range(0, len(Y_nn_list)):
+		if Y_nn_list[i] < 5:
+			Y_nn_list[i] = 0
+		if Y_nn_list[i] >= 5 and Y_nn_list[i] <= 7:
+			Y_nn_list[i] = 1
+		if Y_nn_list[i] > 7:
+			Y_nn_list[i] = 2
+	for i in range(0, len(Y_nn_test_list)):
+		if Y_nn_test_list[i] < 5:
+			Y_nn_test_list[i] = 0
+		if Y_nn_test_list[i] >= 5 and Y_nn_test_list[i] <= 7:
+			Y_nn_test_list[i] = 1
+		if Y_nn_test_list[i] > 7:
+			Y_nn_test_list[i] = 2
+	Y_nn = np.array(Y_nn_list, dtype=int)
+	Y_nn_test = np.array(Y_nn_test_list, dtype=int)
+
 	print Y_nn
-
-	#Encode labels to values: 0,1,2,3
-	le = LabelEncoder()
-	#le.fit(Y_nn)
-	#le.fit(Y_nn_test)
-
-	Y_nn = le.fit_transform(Y_nn)
-	Y_nn_test = le.fit_transform(Y_nn_test)
+	print Y_nn_test
 
 	clf = MLPClassifier(algorithm='sgd', 
 						alpha=1e-5,
 						activation='relu',
 						hidden_layer_sizes=(100,),
 						random_state=0,
-						max_iter=500,
+						max_iter=1000,
 						batch_size='auto',
 						learning_rate='constant',
 						learning_rate_init=0.001,
-						verbose=True)
+						verbose=False)
 
 	clf.fit(X_nn, Y_nn)
 
@@ -232,7 +244,7 @@ def main():
 	all_dataset = students_data[0]
 	logs_dataset = students_data[1]
 
-	option = Options.ALL_FEATURES_AGG
+	option = Options.ALL_LOGS
 	if option == Options.LOGS_ONLY:
 	    data = get_data(option, logs_dataset)
 	else:
@@ -240,14 +252,14 @@ def main():
 
 	data = preprocess_data(data, poly_features=False)
 
-	#binary classificication based on final grade
-	#nn_binary_classifier(data)
+	#binary classificication based on exam/final grade
+	nn_binary_classifier(data)
 
-	#4-class classification based on exam grade
+	#3-class classification based on exam/final grade
 	#nn_classifier(data)
 
 	#regression for exam_grades using MLPRegressor() class
-	nn_regressor(data)
+	#nn_regressor(data)
 
 
 if __name__ == '__main__':

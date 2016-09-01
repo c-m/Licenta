@@ -8,6 +8,7 @@ from data_loader import get_data, load_data, preprocess_data, Options
 from nn import LABEL_NAMES_BIN, LABEL_NAMES_MULT
 from nn import model_eval, regressor_eval, plot_confusion_matrix
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import ExtraTreesClassifier, ExtraTreesRegressor
 from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
@@ -19,6 +20,8 @@ def random_forest_clf(data):
     Y_train = data['train_labels'][:,0]
     Y_test = data['test_labels'][:,0]
 
+    #print X_train.shape, X_test.shape
+
     #transform Y_nn and Y_nn_test 
     Y_train[Y_train < 5] = 0
     Y_train[Y_train >= 5] = 1
@@ -28,7 +31,8 @@ def random_forest_clf(data):
 
     #max_features values: sqrt(n_features)/2, sqrt(n_features), 2*sqrt(n_features)
     #n_features == sqrt(10) ~ 3.16
-    clf = RandomForestClassifier(n_estimators=10, max_features=3, oob_score=True)
+    #clf = RandomForestClassifier(n_estimators=10, max_features='sqrt', oob_score=True)
+    clf = ExtraTreesClassifier(n_estimators=10, max_features='sqrt')
     clf.fit(X_train, Y_train)
 
     importances = clf.feature_importances_
@@ -54,8 +58,8 @@ def random_forest_clf(data):
     #plt.show()
 
     model_eval(clf, X_train, Y_train, X_test, Y_test, LABEL_NAMES_BIN)
-    print 'Out-of-bag error score: %f' % clf.oob_score_
-    print clf.oob_decision_function_
+    #print 'Out-of-bag error score: %f' % clf.oob_score_
+    #print clf.oob_decision_function_
 
 def random_forest_regr(data):
 
@@ -181,10 +185,10 @@ def main():
     data = preprocess_data(data, poly_features=False)
 
     #classification with RandomForestClassifier
-    #random_forest_clf(data)
+    random_forest_clf(data)
 
     #regression with RandomForestRegressor
-    random_forest_regr(data)
+    #random_forest_regr(data)
 
     #classification with AdaBoostClassifier
     #adaboost_clf(students_data_set)

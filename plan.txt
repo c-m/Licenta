@@ -48,3 +48,10 @@ Meta-model
 
 
 =MID(B2&" "&B2,FIND(" ",B2)+1,LEN(B2))
+
+
+1-2 min: ce ai facut? pb, de ce e imp? metoda de rezolvare
+cum am rezolvat pb, ce e modelul
+rezultate, precizie
+de ce am facut asta?
+concluzia

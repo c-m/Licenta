@@ -263,22 +263,22 @@ def preprocess_data(data, poly_features=False):
 	if plot_pca:
 		pca = PCA(n_components=3)
 		all_examples = np.vstack((train_data, test_data))
-		print all_examples
+		#print all_examples
 		pca.fit(all_examples)
 		X_r = pca.transform(all_examples)
 
-		print pca.components_
+		#print pca.components_
 		# Percentage of variance explained for each components
 		print('explained variance ratio (first two components): %s'
       		  % str(pca.explained_variance_ratio_))
 		#plt.figure()
 		target_names = ['failed', 'passed']
 		y = np.hstack((data['train_labels'][:,0], data['test_labels'][:,0]))
-		print y
+		#print y
 		#transform final_grades for binary classification (failed/passed)
 		y[y < 5] = 0
 		y[y >= 5] = 1
-		print y
+		#print y
 		# for c, i, target_name in zip("rg", [0, 1], target_names):
 		# 	plt.scatter(X_r[y == i, 0], X_r[y == i, 1], c=c, label=target_name)
 		# plt.legend()
