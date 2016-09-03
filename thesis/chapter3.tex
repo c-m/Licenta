@@ -2,35 +2,100 @@
 
 \section{Getting and Pre-processing the Data}
 
-The data that was used in this thesis comes from our Computer Science 
-Undergraduate course, i.e. Analysis of Algorithms from $2^{nd}$ year during 
-the Fall 2015 semester. For that semester, we have a total record of 180 
-registered students, but we removed those whose attributes were not relevant. 
-Since we are interested in classifying students based on their exam grade, 
+\subsection{Choosing the dataset}
+
+First, when this project was in development, we only had access to a 
+single students dataset, i.e. students performance grades from the 
+Analysis of Algorithms course, which took place in the Fall 2015 semester. 
+As progress was being made with the implementation, it became clear that the 
+dataset could not be practically used, due to its high amount of noisy data. 
+The noise was present in the data because of the small size of the 
+dataset (137 students were taken into consideration) and also, 
+the non-trivial distribution of final grades over the semester activity of students. 
+The grading subjectivity of teaching assistants combined with a new 
+experimental grading method for the course were also important factors in 
+this negative result. Hence, with this much noise in the data, the models 
+have not been able to correctly label the examples and, with more complicated 
+models, there was a high tendency for {\it overfitting} the data. 
+
+Later, as the second semester was ending, we had 
+access to another dataset of students and decided to switch to it. We also 
+kept the students final grades for the first course to use them as attributes 
+for the new dataset, in order to increase accuracy. In the $5^{th}$ 
+chapter of this thesis, a detailed analysis will be made between these two 
+datasets to show how they differ and what is wrong with the first one.
+
+An important note must be made here. To increse the number of examples for 
+our dataset, we could have combined those two above or could have aggregated 
+students from different years into a single dataset but, there are two main 
+reasons we did not do this: one, because the grading method and the number 
+of semester assessments were different from one year to another and, second, 
+because the two courses are conceptually different: one is theoretical, the other 
+is more practical. Also, combining those two sets of examples would just have brought 
+more noise to the second dataset. 
+
+Given this situation, the data that is currently used in this thesis comes from our Computer Science 
+Undergraduate course, i.e. Programming Paradigms from $2^{nd}$ year during 
+the Spring 2016 semester. For that semester, we had a total record of almost 200  
+registered students, but we removed those whose attributes were missing or were not relevant 
+(the ones that had a very low performance).
+Since we are interested in classifying students based on their exam grades and final grades, 
 also implying the classification in {\it passed} and {\it failed} classes, 
-we also removed those student that had a poor grade during the semester and 
-could not participate at the final exam. Having said this, we are left with a 
-total of 137 relevant student records. These records must further be split 
-into two sets: the training set - the set that is used for building the model 
-and the testing set - the set used for testing the accuracy and measure 
-the performance indicators of the model. There is not a standard recipe of 
-how to divide these two sets, but it is recommended that the training set 
-should have a proportion between 60\% and 80\% of the total dataset's number 
-of examples. 
+we kept some students that had a poor grade during the semester and 
+could not participate at the final exam, although they were close to that point. 
+Having said this, we are left with a total of 143 relevant student records. 
+These records must further be split in two sets: the training set - the set 
+that is used for building the model and the testing set - the set used for 
+testing the accuracy and measure the performance indicators of the model. 
+
+There is not a standard recipe of how to divide these two sets, but it is 
+recommended that the training set should have a proportion between 60\% and 
+80\% of the total dataset's number of examples. 
+The current dataset is not uniformly distributed over the {\it failed/passed} 
+classes. There are 40\% students that passed the course and 60\% that failed it.
+This proportion is helpful in studying the prediction models (they must 
+predict the failed students with a slightly higher accuracy). In more detail, 
+from those 143 analyzed students, 57 of them had a positive grade (>=5) and 86 a 
+negative one (<=4). From the 86 students that did not pass the course, 
+55 of them failed the final exam and 31 of them failed the course during 
+the semester (and did not take part in the final examination process). 
+The reason we kept those 31 students in the datased was to give the ML 
+model more data examples, thus increasing the accuracy when predicting 
+{\it failed} students. 
 
 \subsection{Dataset Structure}
+\label{data_str}
+
+To build the dataset, several sources of information were used. The first 
+trivial one is the course semester activity of the students. The second, 
+comes from performance of students achieved at past courses relevant to ours 
+(chosen in different semesters in order to make them as independent from each 
+other as possible), from a topic perspective. The courses that we got the 
+grades from are:
+\begin{itemize}
+\item Computer Programming (PC): first year, first semester
+\item Data Structures (SD): first year, second semester
+\item Analysis of Algorithms (AA): second year, first semester
+\end{itemize}
+Lastly, the third subset of entire dataset was taken from our on-line 
+e-learning course platform\footnote{Moodle, the Open-source learning platform}. 
+There, we had access to all the students activity logs recorded during the 
+course progress. The logs were downloaded as {\it .csv} file format and then, 
+aggregated in four categories for meaningful results.
 
 In Table \ref{table_1} there is a listing with all the attributes (features) 
-used for the training models. There are a total of 10 initial features 
-(will address later on this problem with the number of features). The weight 
-characteristic of the features represents the actual maximum points that a 
-student can get from that assignment (they are all equal, summing for a total 
-of 5 semester points). This was not used in the project, since the value is 
-constant for all features. From the table, we can see that the range for the 
-test and homework grades is not the same. This was resolved by dividing the 
-test grades range with a factor of 20, in order to have a better uniformization 
-of the datased before applying standard pre-processing techniques that are 
-required from learning models.
+belonging to the first subset of features - the course semester activity.
+There are a total of 10 initial features (will address later on this problem 
+with the number of features). The weight characteristic of the features 
+represents the actual maximum points that a student can get from that 
+assignment (they are not equal, but are summing for a total of 6.0 semester 
+points out of 10), and was not used for building the ML models.
+
+Table \ref{table_logs} describes the third subset of our dataset's features: 
+the Moodle logs. Activities including homework forum posts and views ($x_{1}$), active days 
+($x_{2}$), course resources opened ($x_{3}$) and total number of logs per 
+user ($x_{4}$) were used along with the rest of features (together and 
+separately) in the learning models.
 
 \begin{table}[ht]
 \centering
@@ -38,32 +103,64 @@ required from learning models.
 \toprule
 Feature            & Description & Type & Range & Weight \\
 \hline
-t\_1               & Test 1 grade & Float & 0-10 & 0.5 \\
-t\_2               & Test 2 grade & Float & 0-10 & 0.5 \\
-t\_3               & Test 3 grade & Float & 0-10 & 0.5 \\
-t\_4               & Test 4 grade & Float & 0-10 & 0.5 \\
-t\_5               & Test 5 grade & Float & 0-10 & 0.5 \\
-t\_6               & Test 6 grade & Float & 0-10 & 0.5 \\
-hw\_1              & Homework 1 grade & Float & 0-0.5 & 0.5 \\
-hw\_2              & Homework 2 grade & Float & 0-0.5 & 0.5 \\
-hw\_3              & Homework 3 grade & Float & 0-0.5 & 0.5 \\
-hw\_4              & Homework 4 grade & Float & 0-0.5 & 0.5 \\
+t\_1               & Test 1 grade & Float & 0-10 & 0.25 \\
+t\_2               & Test 2 grade & Float & 0-10 & 0.25 \\
+t\_3               & Test 3 grade & Float & 0-10 & 0.25 \\
+t\_4               & Test 4 grade & Float & 0-10 & 0.25 \\
+t\_f               & Final test grade & Float & 0-10 & 1.0 \\
+hw\_1              & Homework 1 grade & Float & 0-1 & 1.0 \\
+hw\_2              & Homework 2 grade & Float & 0-1 & 1.0 \\
+hw\_3              & Homework 3 grade & Float & 0-1 & 1.0 \\
+lab                & Lab activity & Float & 0-0.5 & 0.5 \\
+lecture            & Lecture activity & Float & 0-0.5 & 0.5 \\
 \bottomrule
 \end{tabular}
-\caption[Dataset Details]{Dataset Attribute Details}
+\caption[Dataset Details]{Dataset Semester Attribute Details}
 \label{table_1}
 \end{table}
 
 Next, we need to provide the values used for labelling the examples. Since this 
 thesis treats both classification and regression problems, different types of 
 labels must be present in the dataset. For classification, we use the final 
-grade (integer between 4 and 10) and the exam grade as integer values. For 
-regression, only the exam grade (which is a real number between 0 and 4) is 
-used and it will be represented as a float number. Table \ref{table_2} gives a 
-structured view of how the students dataset labels are used in the studied models.
-For classifying the students into 4 classes based on their exam points the 
-real continuous interval $(0, 4]$ was split into 4 equal subintervals and for 
-each subinterval was assigned a class label (0, 1, 2 and 3, respectively). 
+grade (real number between 0 and 10) and the exam grade as integer values. For 
+regression, only the exam/final grade is used and it will be represented as 
+a float number. 
+
+Table \ref{table_2} gives a structured view of how the 
+students dataset labels are used in the studied models. For classifying the students 
+into 3 classes based on their exam points or final 
+grade, the real continuous interval $(0, 10]$ was split into 3 different-length subintervals: 
+$(0, 5),\ [5, 7]$ and $(7, 10]$. 
+For each subinterval there was assigned a class label: 0, 1 and 2, respectively. 
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{l*{4}{c}r}
+\toprule
+Feature            & Description & Type \\
+\hline
+x\_1               & f(forum\_posts, forum\_views) & Float \\
+x\_2               & Number of active days & Float \\
+x\_3               & Number of course resource views & Float \\
+x\_4               & Total number of logs per user & Float \\
+\bottomrule
+\end{tabular}
+\caption[Logs Dataset Details]{Dataset Logs Attribute Details}
+\label{table_logs}
+\end{table}
+
+The $f$ function from the \ref{table_logs} table is actually a linear combination 
+of the number of forum posts and forum views, as follows:
+
+\begin{equation}
+\centering
+f(\#posted, \#viewed) = \#posted + \frac{\#viewed}{\alpha}
+\end{equation}
+where $\alpha$ is the factor representing the {\it viewed} to {\it posted} ratio of all 
+the homework forum logs (40 in our case). This was chosen because we are more 
+interested in forum posts (as they are more relevant), so the forum views 
+are adjusted with this factor to have a smaller value.
+
 
 \begin{table}[ht]
 \centering
@@ -73,9 +170,9 @@ each subinterval was assigned a class label (0, 1, 2 and 3, respectively).
 \cmidrule(r){2-4}
                         & Label type  & Label Value & Label used \\
 \midrule
-Binary Classification   & Integer     & 0|1         & Final grade \\
-4-class Classification  & Integer     & 0|1|2|3     & Exam grade \\
-Regression              & Float       & 0.0-4.0     & Exam grade \\
+Binary Classification   & Integer     & 0|1          & Exam/Final grade \\
+3-class Classification  & Integer     & 0|1|2        & Exam/Final grade \\
+Regression              & Float       & 0.0-10.0     & Exam/Final grade \\
 \bottomrule
 \end{tabular}
 \caption[Label Structure]{Label Structure}
@@ -84,7 +181,7 @@ Regression              & Float       & 0.0-4.0     & Exam grade \\
 
 \subsection{Data Standardization}
 
-In Machine Learning, standardization of data is a common requierement for a 
+In Machine Learning, standardization of data is a common requirement for a 
 lot of models (e.g.: neural networks and SVMs). This means that, before 
 applying our learning models, we must first scale the features from our dataset. 
 This scaling implies that the data should have {\bf mean} 0 and {\bf standard 
@@ -108,15 +205,69 @@ the preprocessing techniques:
     {Data preprocessing pipeline}%
     {fig.figure2}{0.8}
 
+Data standardization is important if we are comparing features that have different 
+ranges, but it is also necessary for some of the machine learning models. That is 
+because these models use the {\it gradient descent\footnote{an optimization algorithm
+that is used to find a local minimum of a cost function}} algorithm, which is 
+sensitive to feature scaling.
+
 It is worth noting that the mean and standard deviation values must come only 
 from the training data and the transformation must be done on both training and 
 testing sets, for meaningful results. The reason is that, in general, the built 
 Machine Learning model is applied on unseen data (on real-time data), which is 
-not available when the model is built. So, for accurate calculation on the 
+not available when the model is built. So, for accurate calculations on the 
 model's performance and generalization, we must restrict the computation of 
 mean and variance only on the training examples.
 
-\section{Using Polynomial Features}
+\section{Feature generalization}
+
+\subsection{The shape of a general dataset}
+
+Because one of the purposes of this work is to apply the learning model 
+on future datasets (from the same course or even from other courses), 
+we must first generalize the features of the model. To do this, the dimension 
+of the feature space must have a constant value along multiple datasets 
+and each feature must have the same {\it meaning}. Therefore, we are going 
+to divide our current feature space discussed in subsection \ref{data_str} 
+into several categories, based on their similarity. Besides the above stated 
+purpose, an advantage of this feature modelling is to decrease the dimension 
+of the feature space. Having a small, but meaningful dimension of the input, 
+the learning models can sometimes perform better, mainly when the number of 
+examples in the dataset is small. The reasons for this statement are described 
+in the following subsection. 
+
+Since almost every course has a semester grading method based on homeworks, 
+tests, lecture and lab activity, the split visible in table \ref{table_agg} 
+comes natural. With this, the dataset now has a constant number of features: 
+five. If the Moodle logs features (which also have a constant dimension 
+regardless of the dataset used) are further added to this new feature space, 
+there will be a total of nine features. This way, we can use every student 
+dataset, transform it to have this structure and then, apply the model.
+
+A disadvantage of this generalization is that we lose information about 
+features that get aggregated together in a new one. Sometimes this is useful, 
+for example when we want to see what homework or what test was the most relevant 
+in the student's exam or final grade.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{l*{6}{c}r}
+\toprule
+Feature              & Description & Type & Range \\
+\hline
+hw\_agg               & Homework points    & Float & 0-1 \\
+t\_agg                & Test points        & Float & 0-10 \\
+past\_agg             & Past results score & Float & 0-10 \\
+lab                   & Lab activity       & Float & 0-0.5 \\
+lecture               & Lecture activity   & Float & 0-0.5 \\
+\bottomrule
+\end{tabular}
+\caption[Dataset Agg]{Dataset Semester Aggregated Features}
+\label{table_agg}
+\end{table}
+
+Note: the homework, test, and past results aggregated features are calculated as 
+a weighted arithmetic mean between their components.
 
 \subsection{Curse of Dimensionality}
 
@@ -139,12 +290,21 @@ So, supposing that we have $M$ number of examples in the training set and
 the feature tensor is one-dimensional, if we add another dimension to the 
 tensor (another feature), ideally, we need to square the training examples. 
 By induction, the number of training example grows exponentially with the 
-dimension of the feature tensor.
+dimension of the feature tensor. The reason behind this, is that when adding 
+more features to the dataset by keeping the same number of examples, the 
+space where our examples are distributed becomes sparser. So, in order to 
+keep the same sparseness of the space, we must fill the higher dimensional 
+space with more data, and that data must grow exponentially as the dimension 
+of the space increases. Keeping the same size of the dataset will result in 
+overfitting the data, which is bad for a model.
 
 Figure \ref{fig.figure3}\footnote{http://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/} shows a representation of how the number of feature dimensions 
 affects the quality of the learning model. It can be seen that keeping the 
 training examples constant and only increasing the number of features, the 
-accuracy drops by an exponential rate. 
+accuracy drops by an exponential rate. Finding the optimal dimension of the 
+feature space requires a lot of work and testing - there is not an universal 
+recipe that does this yet, but methods such as Feature Selection or Feature 
+Extraction are a good place to start. 
 
 \insfigshw{figure3.png}%
     {The Curse of Dimensionality}%
@@ -163,10 +323,10 @@ to do certain computations, but without being directly involved in higher-dimens
 calculations. Kernels can be linear functions, polynomial functions or even sigmoid 
 functions. Using SVMs, we implicitly add complexity to our model.
 
-Having tested some simple models on the dataset, such as Linear Regression or the 
+Having tested some simple models on the above dataset, such as Linear Regression or the 
 Perceptron, adding some complexity to the models was not at all a bad idea. 
 A good method was the one of using {\bf Polynomial Features}, that combines the 
-initial features into new nonlinear features. Polynomial Features adds more 
+initial dataset's features into new nonlinear features. Polynomial Features add more 
 dimensions to the feature space, but the key here is that they are correlated, 
 so this can help in achieving better prediction accuracy. Here, there are two different 
 options to consider:
@@ -179,7 +339,7 @@ options to consider:
   \item The second approach was to consider only interactions between the 
   features for building a polynomial with the same degree as the number of 
   initial features.
-  Example: The features $(X_1, X_2, X_3)$ are tranformed by the polynomial 
+  Example: The features $(X_1, X_2, X_3)$ are transformed by the polynomial 
   into: $(1, X_1, X_2, X_3, X_1*X_2, X_1*X_3, X_2*X_3, X_1*X_2*X_3)$, resulting 
   in a total of $2^{N}$ final features, where $N$ is the original dimension of 
   the input space.
@@ -203,13 +363,13 @@ $\omega$ and $\beta$:
 \centering
 \tilde{y}(\omega, x) = \omega \cdot x + \beta
 \end{equation}
-where $x = (x_1,x_2,\dots,x_{10}).$
+where $x = (x_1,x_2,\dots,x_{9}).$
 When we add the polynomial features, $x$ is transformed like this:
 \begin{center}
-$x_{nonlinear} = (x_1,x_2,\dots,x_{10},\dots,x_i \cdot x_j,\dots,x_1^2,x_2^2,\dots,x_{10}^2);$ 
- $i, j = \overline{1,10}, i < j$
+$x_{nonlinear} = (x_1,x_2,\dots,x_{9},\dots,x_i \cdot x_j,\dots,x_1^2,x_2^2,\dots,x_{9}^2);$ 
+ $i, j = \overline{1,9}, i < j$
 \end{center}
-The size of the new feature space is: $10+10+C_{10}^2=65$ \\
+The size of the new feature space is: $9+9+C_{9}^2=54$ \\
 Substituting $x_{nonlinear}$ in Equation \ref{lin_reg}, we obtain:
 \begin{equation}
 \centering
@@ -221,8 +381,8 @@ model can fit more complicated data now.
 On the other hand, the Perceptron model was tested using both methods, although the 
 second method turned to be more appropiate, i.e. the {\it interaction features} method. 
 This method was also used for the MLP\footnote{Multi-Layer Perceptron} neural network 
-model. With the size of the feature space of 10, adding interaction features 
-provided a total of $2^{10}=1024$ features.
+model. With the size of the feature space of 9, adding interaction features 
+provided a total of $2^{9}=512$ features.
 
 \section{Visualizing the dataset}
 

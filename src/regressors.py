@@ -29,8 +29,8 @@ def polynomial_regression():
     X_train = data['train_data']
     X_test = data['test_data']
 
-    Y_train = data['train_labels'][:,0]
-    Y_test = data['test_labels'][:,0]
+    Y_train = data['train_labels'][:,1]
+    Y_test = data['test_labels'][:,1]
 
     #construct polynomial features from the coefficients
     poly = PolynomialFeatures(degree=2, interaction_only=False)

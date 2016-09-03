@@ -48,10 +48,11 @@ def model_eval(clf, X_nn, Y_nn, X_nn_test, Y_nn_test, label_names):
 	i = 0
 	t = []
 	for p in prob:
-		if Y_nn_test[i] == 0:
-			t.append(p[0])
-		else:
-			t.append(p[1])
+		# if Y_nn_test[i] == 0:
+		# 	t.append(p[0])
+		# else:
+		# 	t.append(p[1])
+		t.append(p[Y_nn_test[i]])
 		i += 1
 	y_prob = np.array(t)
 	print y_prob
@@ -132,8 +133,8 @@ def nn_binary_classifier(data):
 	
 	X_nn = data['train_data']
 	X_nn_test = data['test_data']
-	Y_nn = data['train_labels'][:,1]
-	Y_nn_test = data['test_labels'][:,1]
+	Y_nn = data['train_labels'][:,0]
+	Y_nn_test = data['test_labels'][:,0]
 
 	#transform Y_nn and Y_nn_test 
 	Y_nn[Y_nn < 5] = 0
@@ -144,8 +145,8 @@ def nn_binary_classifier(data):
 
 	clf = MLPClassifier(algorithm='sgd', 
 						alpha=1e-5,
-						activation='relu', 
-						hidden_layer_sizes=(100,),
+						activation='tanh', 
+						hidden_layer_sizes=(100,10,),
 						random_state=1,
 						max_iter=1000,
 						batch_size='auto',
@@ -166,8 +167,8 @@ def nn_classifier(data):
     
 	X_nn = data['train_data']
 	X_nn_test = data['test_data']
-	Y_nn = data['train_labels'][:,0]
-	Y_nn_test = data['test_labels'][:,0]
+	Y_nn = data['train_labels'][:,1]
+	Y_nn_test = data['test_labels'][:,1]
 
 	# print Y_nn
 	# print Y_nn_test
@@ -197,7 +198,7 @@ def nn_classifier(data):
 	clf = MLPClassifier(algorithm='sgd', 
 						alpha=1e-5,
 						activation='relu',
-						hidden_layer_sizes=(100,),
+						hidden_layer_sizes=(100,10,),
 						random_state=0,
 						max_iter=1000,
 						batch_size='auto',
@@ -244,7 +245,7 @@ def main():
 	all_dataset = students_data[0]
 	logs_dataset = students_data[1]
 
-	option = Options.ALL_LOGS
+	option = Options.ALL_FEATURES_AGG
 	if option == Options.LOGS_ONLY:
 	    data = get_data(option, logs_dataset)
 	else:
@@ -253,10 +254,10 @@ def main():
 	data = preprocess_data(data, poly_features=False)
 
 	#binary classificication based on exam/final grade
-	nn_binary_classifier(data)
+	#nn_binary_classifier(data)
 
 	#3-class classification based on exam/final grade
-	#nn_classifier(data)
+	nn_classifier(data)
 
 	#regression for exam_grades using MLPRegressor() class
 	#nn_regressor(data)

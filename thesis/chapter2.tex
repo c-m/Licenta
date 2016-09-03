@@ -35,10 +35,11 @@ of Machine Learning that today is called {\bf Deep Learning.}
 Along with the research in neural networks, some other models that were developed in that 
 period are worth to mention. The most important ones are Support Vector Machines and kernels 
 (models used for data classification and regression, that can be more time-efficient 
-than neural networks are and provide good performance from a data perspective) and Decision Trees. 
-The latter, in combination with Ensemble Methods helped researchers invent models like 
-{\bf Random Forests} and {\bf Adaptive Boosting} that are now state-of-the-art 
-algorithms for tree models used for a lot of tasks.
+than neural networks\footnote{Some say that SVMs actually subsume Neural Networks, because 
+of the flexibility of kernel functions} are and provide good performance from a data 
+perspective) and Decision Trees. The latter, in combination with Ensemble Methods 
+helped researchers invent models like {\bf Random Forests} and {\bf Adaptive Boosting} 
+that are now state-of-the-art algorithms for tree models used for a lot of tasks.
 
 \subsection{Current interests in the field}
 
@@ -65,7 +66,7 @@ data can be taken from schools and universities (the classical way and also, the
 that this thesis explores), online courses (such as MOOCs\footnote{Massive Open 
 Online Courses}), or even collaborative learning.
 
-With the use of Machine Learning techniques, student can better decide on what courses 
+With the use of Machine Learning techniques, students can better decide on what courses 
 they could take (based on past related grades), whether they have a chance or not to 
 pass an exam before taking it and what indicators are relevant to their final asessment. 
 The course department also benefits from the ``learned'' data because it helps them 
@@ -113,7 +114,7 @@ student characteristics (e.g.: age, gender, parent education, employment status,
 place of residence, etc.) in order to predict academic failure. They concluded that 
 the neural network models had a better accuracy than Logistic Regression (84.3\% 
 versus 77.5\%). They tested 9 ANNs from which the one with 15 neurons in the 
-hidded layer provided the best results, so ANNs methods were appropiate to be used 
+hidden layer provided the best results, so ANNs methods were appropiate to be used 
 in their problem. 
 
 Other references\cite{bibl_4},\cite{bibl_5},\cite{bibl_6} also treat prediction 
@@ -135,3 +136,11 @@ Four classifier models were used in their study and we can see in Figure
     {Classifiers accuracy}%
     {Classifiers accuracy}%
     {fig.figure1}{0.8}
+
+Some other last interesting references for this thesis\cite{bibl_8},\cite{bibl_9} 
+used students on-line activity (course logs) to find patterns related to their overall 
+performance. When applied to a MOOCs platform\cite{bibl_9}, the researchers found 
+that the learners performace is strongly related to the number of videos played 
+in the course platform, posts in course forum and, also, the total number of active 
+days on that platform. With the use of SVMs, they achieved a 95\% accuracy\footnote{They 
+divided the learners in two classes: earning or not a certificate for the course}. 

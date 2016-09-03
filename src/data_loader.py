@@ -250,7 +250,7 @@ def get_data(option, dataset):
 			                   example_names=names)
 
 
-def preprocess_data(data, poly_features=False):
+def preprocess_data(data, poly_features=False, scale=True):
 	"""Apply some preprocessing before using the dataset
 	"""
 
@@ -302,11 +302,12 @@ def preprocess_data(data, poly_features=False):
 		plt.show()
 
 	#scale the dataset to have the mean=0 and variance=1
-	scaler = StandardScaler()
-	scaler.fit(train_data)
-	train_data = scaler.transform(train_data)
-	#apply same transformation to test_data
-	test_data = scaler.transform(test_data)
+	if scale == True:
+		scaler = StandardScaler()
+		scaler.fit(train_data)
+		train_data = scaler.transform(train_data)
+		#apply same transformation to test_data
+		test_data = scaler.transform(test_data)
 
 	if poly_features == True:
 		poly = PolynomialFeatures(degree=train_data.shape[1], interaction_only=True)
