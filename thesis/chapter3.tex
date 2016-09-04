@@ -316,6 +316,7 @@ Extraction are a good place to start.
     {fig.figure3}{0.8}
 
 \subsection{Adding Complexity to the Model}
+\label{polyn}
 
 There are situations in which is better to add complexity to our data. 
 For example, when our dataset in not linearly separable using one, two, or more 
@@ -508,6 +509,86 @@ complex model: {\it Artificial Neural Networks}. Finally, in the third part
 the {\it Random Forest} model is analyzed, with focus on its structure and goals. 
 
 \subsection{Simple Models}
+
+\subsubsection{The Perceptron}
+
+The perceptron is a model used for binary classification. The algorithm is linear: 
+it combines the input vector of features with a vector of weights that are 
+adapted in the learning process, based on the sign value (-1 or +1) of the product 
+between the real class label and the sign value of the linear term $\omega \cdot x + b$. 
+When this process ends, the model can decide if an input belongs to a class or 
+the other. Figure \ref{fig.perceptron} shows the model's simple architecture. 
+
+\insfigshw{perceptron.png}%
+    {The Perceptron}%
+    {The Perceptron}%
+    {fig.perceptron}{0.8}
+
+This design was inspired by how a biological neuron works (it activates on 
+certain learned thresholds) and it was the first step into developing 
+{\it artificial neural networks}, which are a collection of perceptrons 
+arranged in a layered network. 
+
+From the figure, we can see certain elements of the model: $x$ and $omega$ 
+represents the input vector and the vector of weights, respectively; the $bias$ 
+has the role of adjusting the boundary position between the classes; $f$ and 
+the {\it activation} function represents the {\it perceptron algorithm} 
+and $y$ is its output, i.e. $-1$ or $1$. 
+
+
+\subsubsection{Linear Regression}
+
+The Linear Regression model uses the {\it ordinary least squares} method to 
+solve an optimization problem that has the form:
+
+\begin{equation}
+\centering
+min_{\omega} \| \omega \cdot x - y \|_{2}^{2}
+\label{opt_pb}
+\end{equation}
+
+Starting from the standard equation $y = \omega \cdot x + \beta$, the method  
+is used to find the $\omega$ and $\beta$ parameters of the equation that satisfy 
+the above optimization problem. The solutions are:
+
+\begin{equation}
+\centering
+\omega = (x^{T} x)^{-1} x^{T} y ;\ 
+\beta = y - \omega \cdot x
+\end{equation}
+
+Note: since this an optimization problem, {\it gradient descent} cand also be 
+used to find its solution, but with an iterative approach, not analytically like 
+the first method. The cost function used by this algorithm has a form 
+similar to the optimization problem mentioned above in equation \ref{opt_pb}: 
+
+\begin{equation}
+\centering
+Loss(\omega) = \frac{1}{2}\| \omega \cdot x - y \|_{2}^{2}
+\end{equation}
+where $\frac{1}{2}$ is a factor used only as a convenient when calculating 
+the first derivative of the cost function:
+
+\begin{equation}
+\centering
+\frac{\partial Loss(\omega)}{\partial \omega_{j}} = \frac{\partial}{\partial \omega_{j}}\frac{1}{2}
+(\omega x - y)^{2} = (\omega x - y) x_{j}, for\ all j = \overline{1, N}
+\end{equation}
+where $N$ is the input size of an example.
+
+The algorithm uses this partial derivative to repeatedly update the weight vector 
+$\omega$, until convergence:
+
+\begin{equation}
+\centering
+\omega_{j} := \omega_{j} - \alpha \frac{\partial}{\partial \omega_{j}}Loss(\omega),
+\ for\ every\ j.
+\end{equation}
+where $\alpha$ is the learning rate of the algorithm.
+
+Combining this with the {\it polynomial features} discussed in subsection 
+\ref{polyn}, we can extend the model in order to perform better at fitting the 
+data, while still preserving its linearity.
 
 \subsection{Neural Networks}
 

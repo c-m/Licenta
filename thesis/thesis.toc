@@ -24,10 +24,11 @@
 \contentsline {subsection}{\numberline {3.3.2}Looking at the data}{20}{subsection.3.3.2}
 \contentsline {section}{\numberline {3.4}The Models}{22}{section.3.4}
 \contentsline {subsection}{\numberline {3.4.1}Simple Models}{23}{subsection.3.4.1}
-\contentsline {subsection}{\numberline {3.4.2}Neural Networks}{23}{subsection.3.4.2}
-\contentsline {subsection}{\numberline {3.4.3}Random Forest}{23}{subsection.3.4.3}
-\contentsline {chapter}{\numberline {A}Source code}{24}{appendix.A}
-\contentsline {section}{\numberline {A.1}Fi\IeC {{\textcommabelow s}}ierele de configurare }{24}{section.A.1}
-\contentsline {subsection}{\numberline {A.1.1}Configurarea serviciilor}{24}{subsection.A.1.1}
-\contentsline {chapter}{List of Figures}{25}{subsection.A.1.1}
-\contentsline {chapter}{Bibliography}{26}{appendix*.2}
+\contentsline {subsubsection}{The Perceptron}{23}{section*.2}
+\contentsline {subsubsection}{Linear Regression}{24}{section*.3}
+\contentsline {subsection}{\numberline {3.4.2}Neural Networks}{25}{subsection.3.4.2}
+\contentsline {subsection}{\numberline {3.4.3}Random Forest}{25}{subsection.3.4.3}
+\contentsline {chapter}{\numberline {A}Appendices}{26}{appendix.A}
+\contentsline {section}{\numberline {A.1}Neural networks }{26}{section.A.1}
+\contentsline {chapter}{List of Figures}{27}{section.A.1}
+\contentsline {chapter}{Bibliography}{28}{appendix*.4}
