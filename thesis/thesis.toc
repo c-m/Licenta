@@ -18,10 +18,16 @@
 \contentsline {section}{\numberline {3.2}Feature generalization}{14}{section.3.2}
 \contentsline {subsection}{\numberline {3.2.1}The shape of a general dataset}{14}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Curse of Dimensionality}{15}{subsection.3.2.2}
-\contentsline {subsection}{\numberline {3.2.3}Adding Complexity to the Model}{17}{subsection.3.2.3}
-\contentsline {section}{\numberline {3.3}Visualizing the dataset}{18}{section.3.3}
-\contentsline {chapter}{\numberline {A}Source code}{19}{appendix.A}
-\contentsline {section}{\numberline {A.1}Fi\IeC {{\textcommabelow s}}ierele de configurare }{19}{section.A.1}
-\contentsline {subsection}{\numberline {A.1.1}Configurarea serviciilor}{19}{subsection.A.1.1}
-\contentsline {chapter}{List of Figures}{20}{subsection.A.1.1}
-\contentsline {chapter}{Bibliography}{21}{appendix*.2}
+\contentsline {subsection}{\numberline {3.2.3}Adding Complexity to the Model}{16}{subsection.3.2.3}
+\contentsline {section}{\numberline {3.3}Visualizing the dataset}{19}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}PCA}{20}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Looking at the data}{20}{subsection.3.3.2}
+\contentsline {section}{\numberline {3.4}The Models}{22}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}Simple Models}{23}{subsection.3.4.1}
+\contentsline {subsection}{\numberline {3.4.2}Neural Networks}{23}{subsection.3.4.2}
+\contentsline {subsection}{\numberline {3.4.3}Random Forest}{23}{subsection.3.4.3}
+\contentsline {chapter}{\numberline {A}Source code}{24}{appendix.A}
+\contentsline {section}{\numberline {A.1}Fi\IeC {{\textcommabelow s}}ierele de configurare }{24}{section.A.1}
+\contentsline {subsection}{\numberline {A.1.1}Configurarea serviciilor}{24}{subsection.A.1.1}
+\contentsline {chapter}{List of Figures}{25}{subsection.A.1.1}
+\contentsline {chapter}{Bibliography}{26}{appendix*.2}

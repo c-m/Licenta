@@ -50,7 +50,10 @@ testing the accuracy and measure the performance indicators of the model.
 
 There is not a standard recipe of how to divide these two sets, but it is 
 recommended that the training set should have a proportion between 60\% and 
-80\% of the total dataset's number of examples. 
+80\% of the total dataset's number of examples. For empirical reasons, the 
+ratio of 80-to-20 percent was chosen for our dataset and the examples were sorted 
+alphabetically based on the student's surname (the order is independent from the 
+features and labels).
 The current dataset is not uniformly distributed over the {\it failed/passed} 
 classes. There are 40\% students that passed the course and 60\% that failed it.
 This proportion is helpful in studying the prediction models (they must 
@@ -222,6 +225,7 @@ mean and variance only on the training examples.
 \section{Feature generalization}
 
 \subsection{The shape of a general dataset}
+\label{dataset_gen}
 
 Because one of the purposes of this work is to apply the learning model 
 on future datasets (from the same course or even from other courses), 
@@ -313,7 +317,7 @@ Extraction are a good place to start.
 
 \subsection{Adding Complexity to the Model}
 
-There are situations in which is better to add complexity to our features. 
+There are situations in which is better to add complexity to our data. 
 For example, when our dataset in not linearly separable using one, two, or more 
 features, we can add extra dimensions to the feature tensor in order to make 
 that data separable. {\bf SVMs} make use of this approach, by using multiple 
@@ -384,5 +388,127 @@ This method was also used for the MLP\footnote{Multi-Layer Perceptron} neural ne
 model. With the size of the feature space of 9, adding interaction features 
 provided a total of $2^{9}=512$ features.
 
+Besides {\bf Polynomial Features}, another way to add more features from 
+existing features is to use {\bf Trigonometric Features}, like $sin(x)$, 
+$cos(x)$, etc. This can be useful when you only have two or three features in the 
+dataset and want to increase the input size a little more to see if the model 
+(e.g. neural networks) can fit the data more precisely.
+
+It is worth saying here that this approach of making the model more complicated 
+is a good thing when having a big dataset of training examples. In our case, the 
+training examples have a dimension of 80\% of a total of 143 examples, which is 
+approximately 115 examples. With this number, and with an input size of 9 features, 
+generating polynomial features and increasing the input space to a much higher 
+value does not scale very well, even if the features are correlated to each other: 
+it will only make the data more complex and the model will give bad results, 
+no matter how good it is, theoretically. 
+
 \section{Visualizing the dataset}
 
+Machine Learning can be very counter-intuitive when we are dealing with 
+the number of dimensions. Often, it implies working with hundreds, or even 
+thousands of dimensions, and our human mind cannot reason easy about this 
+(or not at all) when it comes to visualizing/imagining what is happening 
+with the data or how it looks. Humans can think with no problem in two 
+or three dimensions (even four, with some effort), so researchers in this 
+field came up with some useful tools that do a {\it dimensionality reduction} 
+of the data. This means transforming data from higher-dimension space to 
+a human-meaningful lower-dimension space, with the purpose of having a view 
+of how the dataset looks before trying to apply some Machine Learning models 
+ot it. Also, another reasing for the reduction of the input space is to decrease 
+the number of features in an optimal way (find the most important ones or create 
+new fewer ones from the existing features), so the models can provide better 
+results.
+
+There are many tools that are used for the dimensionality reduction. Some 
+examples are: {\bf PCA\footnote{Principal Component Analysis}, MDS\footnote
+{Multidimensional Scaling} and t-SNE\footnote{t-Distributed Stochastic Neighbor 
+Embedding}}. If visualization is what is needed, {\bf Graph Based Visualizations} 
+models are very helpful, as they give important insights into the structure 
+of the data, i.e. how the points are connected to each other.
+
+\subsection{PCA}
+
+For this work, the {\it PCA} technique was used to get information about our 
+dataset and see how it looks, visually. PCA was not used for {\it feature 
+extraction} purposes, since the aim was to focus on the models and current 
+features and to get useful insights about them and their role in the student's 
+performance. 
+
+What PCA does is to get the original input space and apply to it an orthogonal 
+linear transformation in such a way that it will reduce the dimension of the 
+input space and the new points will be spreaded the most in the new space. 
+The reason behind this is to capture the most possible {\it variance} of the 
+new data, so we can get a better look at them. Variance measures how much 
+the data is distributed across the space, i.e. how far a set of points are 
+spread out from their central point (thei mean value).
+
+For example, considering the dataset fits in an {\it N-dimensional} hypercube, 
+PCA will find the optimal angle to look at the data and then will project that data 
+to two or three orthogonal axes, so it can be visualized. That angle will 
+give the most variation in the data. However, the most variation does not 
+always imply that the new dimensions can be used as new, alternative features 
+for the learning algorithms, mostly when the dataset is not classifiable ( it 
+has a very high amount of noise).
+
+\subsection{Looking at the data}
+
+Since our dataset's feature space has a minimum dimension of 4 (when 
+using just the Moodle logs features) and a maximum dimension of 17 (when 
+using all the possible features - past results, semester grades and 
+Moodle logs), PCA was applied multiple times for different subsets of the 
+feature space with the goal of reducing its dimension. In this subsection, 
+the dataset described in subsection \ref{dataset_gen} was used as an example. 
+
+\insfigshw{figure4.png}%
+    {2D PCA of the model}%
+    {2D PCA of the model}%
+    {fig.figure4}{0.8}
+
+In figure \ref{fig.figure4}, it can be seen how the points are spread across 
+the two principal axes in order to have the most variance. The first one, i.e. 
+the horizontal one, represents the first principal component (with the highest 
+variance) and the second one (the vertical axis) count for the second principal 
+component (which has the second-highest variance). After the plot was made, 
+the points were colored based on their class membership. The red dots represent 
+the students that failed the course and the green dots the ones that passed 
+(for this example only the binary split of the examples was taken into consideration). 
+We can see from the picture that the PCA algorithm manages to split the dataset 
+without {\it knowing} about the label values. This is why PCA can be seen as 
+an unsupervised learning model for classification that finds patterns in the data 
+by its own. 
+
+\insfigshw{figure5.png}%
+    {3D PCA of the model}%
+    {3D PCA of the model}%
+    {fig.figure5}{0.8}
+
+Figure \ref{fig.figure5} show the same PCA analysis of the same dataset, but 
+this time plotted in three dimensions, only to get another viewable perspective.
+The higher the number of dimensions, the more information the model has. So, 
+using three instead of two dimensions for the PCA, we can get more insight into 
+the structure of the data (e.g.: in three dimensions we can see if the data has 
+a curvature, and this can be helpful).
+
+Looking at the two visualizations made by the PCA analysis, some conclusions can 
+be drawn about the dataset. First, we can observe that there is only a small 
+mount of noise in the data, which is a good thing, because the models used will 
+be able to classify students with a high accuracy. Second, PCA provides a 
+safety check before going further with building the model (if we do not get an 
+overview of our dataset, we will not know how well is expected from it to perform).
+
+\section{The Models}
+
+After building the dataset, which implied choosing the examples and the subsets 
+of features, the next step is to choose a Machine Learning model (or more) to 
+start training the data. The first part of this section discusses the design of 
+two simple models (the {\it Perceptron} and the {\it Linear Regression} model), 
+while the second subsection expands the architecture and components of a more 
+complex model: {\it Artificial Neural Networks}. Finally, in the third part 
+the {\it Random Forest} model is analyzed, with focus on its structure and goals. 
+
+\subsection{Simple Models}
+
+\subsection{Neural Networks}
+
+\subsection{Random Forest}

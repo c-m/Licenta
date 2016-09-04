@@ -5,6 +5,8 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {2.1}{\ignorespaces Classifiers accuracy}}{8}{figure.2.1}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Data preprocessing pipeline}}{13}{figure.3.1}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces The Curse of Dimensionality}}{16}{figure.3.2}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Data preprocessing pipeline}}{14}{figure.3.1}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces The Curse of Dimensionality}}{17}{figure.3.2}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces 2D PCA of the model}}{21}{figure.3.3}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces 3D PCA of the model}}{22}{figure.3.4}
 \addvspace {10\p@ }
