@@ -1,0 +1,107 @@
+\chapter{Implementation}
+
+This chapter describes the design and implementation of the models expanded in 
+Chapter 3, from a more technical perspective. The structure of the dataset and 
+also short code listings will be used to show the logic of the implementation. 
+
+In the first section of this chapter, 
+we are going to see the approach taken to gather the dataset and parse it to our 
+{\it Python} program. The user can choose which subset of the features it wants 
+to use in order to apply the ML models and get the desired results.
+
+Next, we are going to focus on the {\it scikit-learn Python} library, which is 
+an open-source Machine Learning library with many implemented features. Here, 
+we will show how we used our chosen models with the help of this library.  
+
+\section{Parsing the students data}
+
+All the data used in this project was taken from the course catalog and from 
+the {\bf Moodle} platform. The gathered data was put into \texttt{.csv} files, 
+one for the semester grades and one for the logs taken from the on-line course 
+platform. 
+
+The first line of each \texttt{.csv} file holds the names for the values found in 
+the next line. Each further line contains the key string of the example along 
+with the feature values and label values that were measured for it. An example 
+taken from the {\it grades} file is given in the following listing: 
+
+\lstinputlisting[language=Python]{test.py}
+
+The second file completes the input features of the first one, with the mention that the 
+final \texttt{.csv} file was build by a {\it python} script, because we had to 
+aggregate all the measurements present in multiple \texttt{.csv} files into 
+a single file, with the same structure and order as the one showed above. So, the 
+second file contains the course platform log features that were described in table 
+\ref{table_logs}.
+
+For loading the dataset into memory, we used a source file called 
+\texttt{data\_loader.py}. Here, all the data from both \texttt{.csv} file is loaded 
+into a \texttt{python dict()} data structure. Then, using the options defined visible in 
+the code listing example \ref{parse_ex}, we can choose which subset of our total extracted 
+features are we going to use. 
+
+\lstinputlisting[label=parse_ex,caption=Parsing the data,language=Python]{options.py}
+
+In the above code, the desired dataset is loaded into a \texttt{DatasetContainer} class 
+with the \texttt{get\_data(opt, dataset)} function. The \texttt{load\_data} function 
+reads the content of the \texttt{.csv} files and puts it into a dictionary. After 
+this, the current dataset is preprocessed (scaled and added polynomial features 
+to it, if desired) by the \texttt{preprocess\_data} function. Also, in this function, 
+we implemented the PCA analysis of the dataset. 
+
+\section{scikit-learn}
+
+The {\it scikit-learn} library is a free machine learning library implemented in 
+the {\it Python} programming language, with some base algorithms written in {\it C}, 
+for performance considerations. It is simple to use and has a wide range of 
+tools for data analysis and machine learning projects. The backend of the library 
+uses {\bf Numpy, SciPy and matplotlib} packages developed for scientific purposes. 
+
+The library provides support for all the machine learning subfields, from 
+classification to regression and clustering problems. Throughout the development 
+of this project, we experimented with machine learning algorithms implemented 
+in this library and also, tools for preprocessing and visualizing the data and 
+the results of our models. 
+
+\subsubsection{General Usage}
+
+For preprocessing we used the \texttt{StandardScaler()} object to scale our raw 
+data, with the goal of having zero mean and unit variance of the data. Also, for generating 
+our polynomial features based on the initial features, 
+\texttt{PolynomialFeatures()} object from the \texttt{scikit-learn} library was used. 
+
+The {\it PCA} algorithm is also implemented in the library, so we used it to 
+generate our two- and three-dimensional plots exposed in Chapter 3. For our 
+classifier models evaluation, we needed to calculate and visualize the 
+{\it confusion matrix} which evaluates the performance of the classifier 
+(more details on this will be given in the following chapter). We used the 
+\texttt{confusion\_matrix} function from the library to calculate the matrix. 
+
+The {\it scikit-learn} library also has implementations for many evaluation 
+metrics of the models, which can be found in the \texttt{sklearn.metrics} 
+module. We used those metrics in our evaluation process and also for comparing the 
+models.
+
+\subsubsection{Machine Learning Algorithms}
+
+The models discussed in section \ref{models}, i.e. the {\bf Linear Regression, 
+Perceptron, Neural Network and Random Forest} models were all used from the 
+{\it scikit-learn} library. For the neural networks models (the classifier and 
+the regressor), we had to use a {\it development} version of the library, since 
+they are not currently implemented in the stable version. 
+
+In the code listing \ref{nn_clf}, a neural network binary classifier is used 
+to train our dataset. The \texttt{model\_eval} function evaluates the model 
+based on training and testing data performance metrics. 
+
+\lstinputlisting[label=nn_clf,caption=Neural Network Classifier,language=Python,basicstyle=\footnotesize]{nn_clf.py}
+
+Using the random forest classfier only requires changing the \texttt{clf} 
+variable in the code listed above to: \texttt{clf = RandomForestClassifier(n\_estimators=10, 
+max\_features='sqrt')} and the rest of the code can remain unchanged. 
+
+If we want to see the feature ranking computed by the random forest model, we 
+need to use the \texttt{clf.feature\_importances\_} attribute of the \texttt{clf} 
+classifier object. Having this array of values - a probability distribution over 
+the feature set, it is easy to plot the feature importances and their names on 
+a graph, along with their standard deviations. 

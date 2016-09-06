@@ -222,15 +222,15 @@ not available when the model is built. So, for accurate calculations on the
 model's performance and generalization, we must restrict the computation of 
 mean and variance only on the training examples.
 
-\section{Feature generalization}
+\section{Generating new features}
 
 \subsection{The shape of a general dataset}
 \label{dataset_gen}
 
 Because one of the purposes of this work is to apply the learning model 
 on future datasets (from the same course or even from other courses), 
-we must first generalize the features of the model. To do this, the dimension 
-of the feature space must have a constant value along multiple datasets 
+we must first generalize the model, i.e. find a general set of features. To do this, 
+the dimension of the feature space must have a constant value along multiple datasets 
 and each feature must have the same {\it meaning}. Therefore, we are going 
 to divide our current feature space discussed in subsection \ref{data_str} 
 into several categories, based on their similarity. Besides the above stated 
@@ -449,7 +449,7 @@ PCA will find the optimal angle to look at the data and then will project that d
 to two or three orthogonal axes, so it can be visualized. That angle will 
 give the most variation in the data. However, the most variation does not 
 always imply that the new dimensions can be used as new, alternative features 
-for the learning algorithms, mostly when the dataset is not classifiable ( it 
+for the learning algorithms, mostly when the dataset is not classifiable (it 
 has a very high amount of noise).
 
 \subsection{Looking at the data}
@@ -493,12 +493,14 @@ a curvature, and this can be helpful).
 
 Looking at the two visualizations made by the PCA analysis, some conclusions can 
 be drawn about the dataset. First, we can observe that there is only a small 
-mount of noise in the data, which is a good thing, because the models used will 
+amount of noise in the data, which is a good thing, because the models used will 
 be able to classify students with a high accuracy. Second, PCA provides a 
-safety check before going further with building the model (if we do not get an 
-overview of our dataset, we will not know how well is expected from it to perform).
+safety check before going further with building the model (if we do not get a 
+preliminary overview of our dataset, we will not know how well is expected from 
+it to perform).
 
 \section{The Models}
+\label{models}
 
 After building the dataset, which implied choosing the examples and the subsets 
 of features, the next step is to choose a Machine Learning model (or more) to 
@@ -535,7 +537,6 @@ has the role of adjusting the boundary position between the classes; $f$ and
 the {\it activation} function represents the {\it perceptron algorithm} 
 and $y$ is its output, i.e. $-1$ or $1$. 
 
-
 \subsubsection{Linear Regression}
 
 The Linear Regression model uses the {\it ordinary least squares} method to 
@@ -565,6 +566,7 @@ similar to the optimization problem mentioned above in equation \ref{opt_pb}:
 \begin{equation}
 \centering
 Loss(\omega) = \frac{1}{2}\| \omega \cdot x - y \|_{2}^{2}
+\label{sq_loss}
 \end{equation}
 where $\frac{1}{2}$ is a factor used only as a convenient when calculating 
 the first derivative of the cost function:
@@ -592,4 +594,231 @@ data, while still preserving its linearity.
 
 \subsection{Neural Networks}
 
+\subsubsection{Model Architecture}
+
+To define a {\bf neural network}, first we have to start from the concept of 
+the {\bf perceptron}, discussed in the first part of this section. To remind, 
+a perceptron takes inputs of a certain size and computes a single output, 
+which has a binary value (0/1 or -1/1), thus being able to classify data 
+in a linear approach. 
+
+When the dataset is too complicated to be linearly classified, the perceptron 
+model is not capable of doing the job. Therefore, a more complex model had 
+to be developed based on the latter, and that is {\bf neural networks}. 
+A neural network is a generalization of the perceptron model, that is built up 
+by not one, but many single neurons (or perceptron) arranged in a network that 
+has a particular structure. The network consist of layers of neurons (groups 
+of interconnected neurons). The neurons from a layer are independent to each 
+other and only connected to the neurons from the next and last layers. 
+
+\insfigshw{figure6.png}%
+    {Neural network architecture}%
+    {Neural network architecture}%
+    {fig.figure6}{0.9}
+
+Figure \ref{fig.figure6} shows a generic architecture of a neural network\footnote
+{Sometimes called a Multi-layer Perceptron}. In the first layer, the input is given 
+to the neural network. This network has a single layer of hidden units, but 
+there are networks with more than one hidden layers, used at very complex 
+computations, such as pattern recognition, image classification, and so on. 
+The hidden layer in the figure makes four basic decisions based on the weights 
+assigned to each edge between the neurons from the input layer and the ones 
+from the hidden layer. The hidden layer and the output layer are also connected 
+to each other, and another set of weights exists between them. The weights from 
+each of the connections can also be seen as a weight matrix of size {\it number 
+of hidden units} $\times$ {\it number of last layer size}. 
+
+With each of the hidden layers, the model learns new {\it representations} of 
+data, by making transformations of the space topology in which the data resides. 
+The reason for this is to make the dataset easier to classify in the last layer 
+of the network (in the last representation of the dataset, the model may simply construct 
+a line through it). This is why the neural network models are non-linear and 
+capable of predicting very complex inputs.
+
+Since this model is capable of learning non-linear functions from the data, 
+after each layer (except the input layer) there must exist an activation function 
+similar to the one used in the perceptron model, otherwise the model will still 
+be linear, no matter the number of hidden layers. There exists multiple activation 
+functions for neural networks, but the most popular ones are the {\it sigmoid function}, 
+the {\it hyperbolic tangent function} and the {\it rectifier function} (ReLU). They 
+give different results based on the dataset and are chosen in the process of 
+{\it cross-validation\footnote{The technique of running multiple models or 
+variations of the same model to a given dataset, in order to choose the most performant one.}}. 
+
+For the learning part of this model, {\it gradient descent} is used. If the 
+model is trained on large datasets (thousands or millions of examples), a 
+different version of this algorithm is implemented and that is, {\it stochastic 
+gradient descent}. The classic algorithm must load the entire dataset into memory 
+at each iteration, and this is not scalable if the dataset is big. On the other 
+hand, stochastic gradient descent applies the same computations of a random 
+subset ({\it mini-batch}) of the data at each step. This gives it a probabilistic 
+flavor (hence the word {\it stochastic}) and it means that it can either find the minimum 
+faster, or it may never converge to the minimum, theoretically. In practice, the error 
+is neglected, as the computed value is very close to the real minimum.
+
+\subsubsection{Usage}
+
+In this, part we are going to discuss how the {\it neural networks} had been  
+applied as part of the development of our model. 
+
+We used neural networks for both classifying our dataset in two and three classes 
+and predicting a continuous value based on the labels of the dataset pointed in table 
+\ref{table_2}. For the regression type of problem (real value prediction) a single 
+neuron was used in the output layer of the network, with no activation function 
+(or, equivalently, with the {\it identity function} as the activation function). 
+
+The classifier, however, used the {\it logistic function} for the binary classification 
+to obtain values between 0 and 1. For this case, there is still only one neuron 
+needed at the output layer. In general, for $n$-class classification, the output layer 
+has $n$ neurons, and each neuron provides as value the probability for the input 
+example to belong to the class represented by that neuron. But, since the 
+probabilities must sum up to 1, for binary classification we only need one 
+neuron in the output layer, because the second probability value can be infered 
+from the first one.
+
+The 3-class classification uses the {\it softmax} function at the output layer:
+
+\begin{equation}
+\centering
+softmax(y')_{i} = \frac{e^{y'_{i}}}{\sum_{k=1}^K e^{y'_{k}}}
+\end{equation}
+where $y'$ is the output of the network before passing to the {\it softmax} 
+layer (raw output) and K is the total number of classes. $i$ represents 
+the i-th component of the class vector.
+
+The {\it softmax} function also has the property of transforming an input of 
+raw values into a probability distribution over the set of classes. So, when 
+predicting a class label, the value with the highest probability is picked 
+from all the class probability values.
+
+For regression, our network uses the {\it Loss} function stated in equation 
+\ref{sq_loss} as the cost function, which it will try to minimize. On the other 
+hand, the both classifiers use a different cost function, since they deal with 
+probabilities this time. The cost function used is called the {\it Cross-Entropy} 
+function and is defined as follows:
+
+\begin{equation}
+\centering
+Loss(\omega) = \frac{1}{M}\sum_{m=1}^M\sum_{k=1}^K [y_{k}^{(m)} log_2(\frac{1}{y'_{k}}) + 
+(1-y_{k}^{(m)}) log_2(\frac{1}{1-y'_{k}})]
+\end{equation}
+here, $y'$ is the predicted probability value, $y$ the desired output (encoded as a 
+{\it 1-of-k} vector\footnote{A vector which has 1 for the correct class component and 
+zero in the rest of its components}), $K$ the number of classes, $M$ the number of training 
+examples and $\omega$ being represented as the tensor of parameters (weights and biases) 
+of the network that will get updated during the training process in order to minimize 
+this loss functions.
+
+The architecture of our model for the 3-class classification problem is 
+evidentiated in figure \ref{fig.figure7}, as an example. The input layer has a 
+size of 9 neurons (corresponding to our number of features), the output layer 
+consists of 3 neurons (given that we are classifying the dataset in three 
+categories) and the hidden layer has 10 neurons. We chose a single hidden layer 
+because of the few number of training examples (if the model is too complex 
+for the dataset, it would overfit the data and not generalize well).
+
+The number of hidden layer units was decided based on some empirical rules\footnote
+{www.faqs.org/faqs/ai-faq/neural-nets/part3/section-10.html}:
+
+\begin{itemize}
+\item The number of hidded neurons should be between the number of input size 
+and the number of output size (typically the mean of those)
+\item The hidded layer size should not exceed twice the number of the input layer size
+\item The size of the training examples should an upper-bound for the hidden 
+\item Choosing the size of the hidden layer as $sqrt(N_{i} \cdot N_{o})$, where $N_{i}$ 
+is the input size and $N_{o}$ is the output size can lead to good results\cite{n_hidden}
+\end{itemize}
+
+The hidden layer architecture is different for the other classification problem and the 
+regression one. However, the same number of layers was preserved (but the size of the 
+layer was changed). Also, the output size has different values: two for the binary 
+classification and one for the regression. Other parts of the model (input, algorithm, 
+learning rate and other model parameters) remained unchanged.
+
+\insfigshw{figure7.png}%
+    {3-class NN classifier with one hidden layer}%
+    {3-class NN classifier with one hidden layer}%
+    {fig.figure7}{0.9}
+Note: The learning algorithm used was SGD\footnote{Stochastic Gradient Descent} 
+with a learning rate value of $1E-3$.
+
 \subsection{Random Forest}
+
+{\it Random Forests} are probabilistic learning models based on the {\it 
+Decision Trees} model. Decision Trees are simple tree structures that are 
+used mainly for classifying data. The tree finds the best possible split of 
+the dataset by assigning to each node a feature from the feature space. 
+The feature selection is made by making an objective measurement of the 
+``purity''\footnote{The purity is measured by entropy or by the {\it gini 
+impurity function}} of the dataset (we select the feature that gives the best 
+split of our data). Therefore, when the algorithm arrives at the leaves of 
+the tree our dataset is classified, since each leaf contains the value of one 
+of our classes. If we run the algorithm multiple times on the same dataset 
+the results will be the same, because all the decisions taken by it are 
+deterministic. Given this, the model is sensitive to small perturbations of 
+the dataset, so it has the habit of overfitting. 
+
+To conquer the limitations of the above model, there was a need for a better 
+one, so Random Forests were invented. The Random Forest model extends the 
+notion of Decision Trees, by using an different approach. Instead of building 
+a single complicated deterministic tree, Random Forest uses a collection 
+of simple trees (a forest of trees) generated from random subsets of the data. 
+An overview on the structure of this model can be seen in figure \ref{fig.figure8}
+\footnote{https://www.researchgate.net/figure/278677730\_fig2\_Conceptual-diagram-of-the-RANDOM 
+-FOREST-algorithm-On-the-left-trees-are-trained}.
+
+\insfigshw{figure8.png}%
+    {Random Forest model}%
+    {Random Forest model}%
+    {fig.figure8}{0.9}
+
+Each tree is trained with a random subset of the whole dataset. At each node, 
+a small subset of all the features is chosen and the split will be made like 
+it is made in the Decision Tree model (a feature will be selected from that 
+random subset that will best split the data). The size of the feature 
+subset is usually chosen as the square root of the total feature size. At the end of 
+each random tree a table with the frequencies of all the labels will be kept 
+in each leaf, based on the partitioning of the training samples. 
+When testing new data with this model, the input goes through all the trees 
+in the forest and each tree will provide a frequency list of the labels. 
+By a majority voting method (or by averaging\footnote{Depending on the 
+implementation, for example, {\it scikit-learn} uses the averaging method}), 
+the model will choose the class that has the highest probability. 
+
+Having this structure, Random Forests are good for reducing the {\it variance} 
+\footnote{A measure of how the model behaves on small fluctuations of the data}
+of the model, by averaging results from multiple random decision trees. 
+
+Besides making predictions, Random Forest models also provide information about 
+the importance of each feature in the prediction process. This is because each 
+node in each tree works with a small random subset of all the features and 
+selects the one that gives the best split. So, features that are chosen at the 
+top of a tree are considered more important because they contribute to a bigger 
+set of training examples than the ones from the bottom. At the end, each of the trees will 
+provide a list of the most important features (the ones that were selected 
+for the splits) and then, a {\it feature ranking} can be computed by aggregating 
+all these local ranks. 
+
+\subsubsection{Usage}
+
+We used the Random Forest model in this thesis mainly for getting information 
+about our features and how important they are for our model, and also, for 
+making predictions (and comparing the performance with the Neural Network model). 
+The feature importances helps us to see what features, i.e. what performance 
+metrics are most relevant when performing an automatic evaluation for a student, 
+so the staff of the course can work on improving the asessments that were not 
+so relevant is the student's final examination grade.
+
+Also, this can be used as a feature selection tool: the Random Forest model 
+can provide a list of the most relevant features and then, another Machine 
+Learning model can use this selected features as input. The outcome is that the 
+model will give more accurate results and will have a better {\it running time}, 
+mostly when we are dealing with a large datased and a complex learning model.
+
+For the thesis, a Random Forest model with 10 estimators (random decision trees) 
+was used for all the classification and regression approaches. The number of 
+maximum features to select when buiding a node and finding the best split is 
+$sqrt(N)$ for the classifiers, where $N$ is the size of the total feature 
+space of the model. When using regression, the maximum features to consider 
+is $N$. Different values were of this hyper-parameter were used and will be 
+analyzed in the $5^{th}$ chapter of this report. 

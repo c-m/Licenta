@@ -146,7 +146,7 @@ def nn_binary_classifier(data):
 	clf = MLPClassifier(algorithm='sgd', 
 						alpha=1e-5,
 						activation='tanh', 
-						hidden_layer_sizes=(100,10,),
+						hidden_layer_sizes=(200,),
 						random_state=1,
 						max_iter=1000,
 						batch_size='auto',
@@ -197,8 +197,8 @@ def nn_classifier(data):
 
 	clf = MLPClassifier(algorithm='sgd', 
 						alpha=1e-5,
-						activation='relu',
-						hidden_layer_sizes=(100,10,),
+						activation='tanh',
+						hidden_layer_sizes=(10,),
 						random_state=0,
 						max_iter=1000,
 						batch_size='auto',
@@ -207,6 +207,7 @@ def nn_classifier(data):
 						verbose=False)
 
 	clf.fit(X_nn, Y_nn)
+	print X_nn.shape
 
 	#evaluate de trained model
 	model_eval(clf, X_nn, Y_nn, X_nn_test, Y_nn_test, LABEL_NAMES_MULT)

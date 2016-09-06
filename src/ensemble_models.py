@@ -254,10 +254,10 @@ def main():
     data = preprocess_data(data, poly_features=False, scale=False)
 
     #classification with RandomForestClassifier
-    random_forest_3clf(data)
+    #random_forest_3clf(data)
 
     #regression with RandomForestRegressor
-    #random_forest_regr(data)
+    random_forest_regr(data)
 
     #classification with AdaBoostClassifier
     #adaboost_clf(students_data_set)
