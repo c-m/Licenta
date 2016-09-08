@@ -2,8 +2,8 @@
 \contentsline {chapter}{Abstract}{}{chapter*.1}
 \contentsline {chapter}{Keywords}{}{chapter*.1}
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}
-\contentsline {section}{\numberline {1.1}Motivation}{1}{section.1.1}
-\contentsline {subsection}{\numberline {1.1.1}Lorem ipsum}{2}{subsection.1.1.1}
+\contentsline {section}{\numberline {1.1}Motivation}{2}{section.1.1}
+\contentsline {section}{\numberline {1.2}Contributions}{2}{section.1.2}
 \contentsline {chapter}{\numberline {2}Background}{4}{chapter.2}
 \contentsline {section}{\numberline {2.1}State of the Art}{4}{section.2.1}
 \contentsline {subsection}{\numberline {2.1.1}A very short history of Machine Learning}{4}{subsection.2.1.1}
@@ -36,7 +36,12 @@
 \contentsline {section}{\numberline {4.2}scikit-learn}{34}{section.4.2}
 \contentsline {subsubsection}{General Usage}{34}{section*.7}
 \contentsline {subsubsection}{Machine Learning Algorithms}{35}{section*.8}
-\contentsline {chapter}{\numberline {A}Appendices}{37}{appendix.A}
-\contentsline {section}{\numberline {A.1}Neural networks }{37}{section.A.1}
-\contentsline {chapter}{List of Figures}{38}{section.A.1}
-\contentsline {chapter}{Bibliography}{39}{appendix*.9}
+\contentsline {section}{\numberline {4.3}Testing}{37}{section.4.3}
+\contentsline {chapter}{\numberline {5}Evaluation}{38}{chapter.5}
+\contentsline {section}{\numberline {5.1}First Experiments}{38}{section.5.1}
+\contentsline {section}{\numberline {5.2}Neural Network and Random Forest Evaluation}{41}{section.5.2}
+\contentsline {section}{\numberline {5.3}Model Entropy}{43}{section.5.3}
+\contentsline {chapter}{\numberline {6}Conclusion}{45}{chapter.6}
+\contentsline {section}{\numberline {6.1}Future Work}{46}{section.6.1}
+\contentsline {chapter}{List of Figures}{47}{section.6.1}
+\contentsline {chapter}{Bibliography}{48}{chapter*.9}

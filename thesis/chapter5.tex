@@ -1,0 +1,192 @@
+\chapter{Evaluation}
+
+In this chapter, we describe our approach to evaluating the models we used, 
+with focus on performance, accuracy, features, as well as how confident we 
+are in the answers given by the models. We are going to describe the results 
+of our different subsets of the dataset used and also the poor results obtained 
+from the first tried dataset that was described at the beginning of Chapter 3.
+
+\section{First Experiments}
+As we mentioned in the introduction of the first chapter, another dataset of 
+students was used as a starting point. The main problem with this dataset was 
+that it had a lot of noisy data, i.e. it was not clear to distinguish the 
+failed students from the ones with higher grades. Thus, our trained models 
+gave unrealiable results. 
+
+To get an image of how this first dataset looks like, we are going to use 
+the same PCA analysis which was also done with the second dataset (the one 
+that was used during this project). The next figures shows the 2D plots resulted 
+from the Principal Component Analysis. In both figures, only the grade features 
+were used (without the Moodle logs features, because we did not have at the time 
+we tested the first dataset).
+
+\insfigshw{figure9.png}%
+    {2D PCA of AA dataset}%
+    {2D PCA of PP dataset}%
+    {fig.figure9}{0.5}
+
+\insfigshw{figure10.png}%
+    {2D PCA of PP dataset}%
+    {2D PCA of PP dataset}%
+    {fig.figure10}{0.5}
+
+From the first figure we can observe that, althogh most the {\it passed} students 
+are found in the left side of the plot, not much we can say about the structure 
+of the red points, which represents the {\it failed} students. So, given this 
+preliminary result, we can expect from the models to have a low accuracy when 
+predicting the class of the {\it failed} students. 
+
+The second picture however, separates better the two classes, this being a 
+sign that our models should classify the data with a lower error rate.
+
+To show how the accuracy of the predictors differ between those two 
+datasets, we will use the {\it confusion matrix} as a way of visualizing the 
+prediction error of the model applied to each dataset. As a choice for the 
+model, the two datasets will be trained using a neural network binary classifier. 
+The confusion matrix shows on each column the number of examples predicted 
+in each class, with the rows representing the examples in the true class. 
+
+\insfigshw{figure11.png}%
+    {AA Confusion Matrix}%
+    {AA Confusion Matrix}%
+    {fig.figure11}{0.5}
+
+\insfigshw{figure12.png}%
+    {PP Confusion Matrix}%
+    {PP Confusion Matrix}%
+    {fig.figure12}{0.5}
+
+The first confusion matrix shows in the first row that some of the {\it failed} 
+students were incorrectly predicted as {\it passed} (this is expected after visualizing 
+the PCA plot). In the second confusion matrix we can see that the model managed 
+to better predict the {\it failed} students (which is mainly what we want), and also 
+the {\it passed} ones, which are fewer. 
+
+The accuracy of the first dataset trained with the neural network was 68\% on the 
+testing set, while the second dataset gave an accuracy of 82\% on this classifier 
+model. The features used were the same that we used for the above PCAs.
+
+\section{Neural Network and Random Forest Evaluation}
+
+In this section we will perform a comparison between different subsets of our 
+data and different learning algorithms on the two problems which we had treated: the 
+classification and the regression problems. 
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llr}  
+\toprule
+\multicolumn{2}{c}{Model} \\
+\cmidrule(r){1-2}
+Problem                    & Dataset features               & Testing set Accuracy (\%) \\
+\midrule
+binary classification      & only grades                    & 82.14      \\
+binary classification      & all features                   & 85.71      \\
+binary classification      & all features with aggregation  & 85.71      \\
+3-class classification     & only grades                    & 75.00      \\
+3-class classification     & all features                   & 78.57      \\
+3-class classification     & all features with aggregation  & 78.57      \\
+regression                 & only grades                    & 71.69      \\
+regression                 & all features                   & 79.07      \\
+regression                 & all features with aggregation  & 80.29      \\
+\bottomrule
+\end{tabular}
+\caption[Neural networks results]{Neural networks results}
+\label{table_nn_test}
+\end{table}
+
+In table \ref{table_nn_test} there are different variations of the model tested 
+and we can see their accuracies. We can notice that the error rate of our 
+predictions is lower when using more features. The neural network architecture is 
+the one described in section \ref{nn_section} (the hidden layer size of the 
+network was adapted considering the size of the input). Better results are 
+achieved with the binary classification, while the regression problem gives 
+the lowest performance (is harder to predict the value of the grade with a 
+low error). 
+
+For the 3-class classification problem the confusion matrix is relevant. 
+We can view from the \ref{fig.figure13} figure that our model is good at predicting 
+very bad and very good grades. The problem comes when it tries to predict the 
+grades in the ``middle'' (between 5 and 7), as it ``thinks'' they also count 
+for {\it failed} examples mostly. Looking at the PCA plot from Chapter 3, 
+it can be seen that there is a mix of {\it failed} and {\it passed} students 
+in the middle of the plot, meaning the model will not be able to distinguish 
+between those two and, given the fact that there are more {\it failed} examples 
+in the dataset, the model will choose this class.
+
+\insfigshw{figure13.png}%
+    {Confusion Matrix for 3 classes}%
+    {Confusion Matrix for 3 classes}%
+    {fig.figure13}{0.5}
+
+The next table provides accuracy results for the Random Forest model. 
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llr}  
+\toprule
+\multicolumn{2}{c}{Model} \\
+\cmidrule(r){1-2}
+Problem                    & Dataset features               & Testing set Accuracy (\%) \\
+\midrule
+binary classification      & only grades                    & 78.57      \\
+binary classification      & all features                   & 78.57      \\
+binary classification      & all features with aggregation  & 78.57      \\
+3-class classification     & only grades                    & 75.00      \\
+3-class classification     & all features                   & 71.42      \\
+3-class classification     & all features with aggregation  & 78.57      \\
+regression                 & only grades                    & 75.52      \\
+regression                 & all features                   & 77.03      \\
+regression                 & all features with aggregation  & 78.17      \\
+\bottomrule
+\end{tabular}
+\caption[Randon Forest results]{Random Forest results}
+\label{table_rf_test}
+\end{table}
+
+The Random Forest has good results, regardless of the subset of features used. 
+This is because the model chooses the best possible features when making 
+decisions. So, the number of features does not matter here.
+
+The last important result to mention in this section is the {\it feature 
+ranking} provided by the Random Forest algorithm. In figure \ref{fig.figure14}, 
+the ranks of our chosen features are shown. We can notice that the first three 
+features that give the best accuracy are the aggregated grades (taken from 
+homeworks, tests and past results). Also, the lecture activity is also important, 
+given this plot and the least important grade feature is the lab activity. 
+The Moodle logs do not seem to provide high accuracy to the prediction model, 
+but we can see that the first feature, i.e. the course forum activity feature has 
+the greatest mean importance compared to the other three log features.
+
+\insfigshw{figure14.png}%
+    {Feature ranking}%
+    {Feature ranking}%
+    {fig.figure14}{0.8}
+
+\section{Model Entropy}
+
+In the last section we will focus on the details of another metric that measures 
+the performance of a machine learning model. When using classifiers, for example 
+a binary classifier, our model will output a pair of probabilities for each 
+input example that is given. Actually, this is a probability distribution for 
+that input, consisting of two values for the random variable $y_{k}$. 
+
+If, for example, one of our input is labeled as {\it failed} with a probability 
+of 0.8 and the correct label is also {\it failed} we want to see how good is that 
+the model predicted the label correctly with that value. 
+
+When using the accuracy metric, we cared about the ratio of our correct answers. 
+Here, on the contrary, we care about the confidence in the results that we got 
+from the model. The metric used to measure this confidence is called the 
+{\bf KL Divergence\footnote{Kullback-Leibler divergence}} and is related to the 
+{\bf Cross-Entropy} function. This measure can be seen as a ``distance'' between 
+two probability distribution. When applied to machine learning, the KL divergence 
+measures the distance between the predicted probability distribution and the 
+real distribution of the data. 
+
+Using our dataset, we achieved a KL divergence value of {\bf 0.32} with the neural 
+network model and {\bf 0.41} for the random forest (the lower, the better, since 
+the divergence is a sum over logarithms of probabilities). So, besides the high 
+accuracy of prediction, there is also a high confidence that the prediction is 
+correct. 
+ 

@@ -1,89 +1,65 @@
 \chapter{Introduction}
 
-% XXX: Introducere
+Researchers in the last decades spent a lot of time developing tools and 
+models for problems observed in nature and life. Their approach was purely 
+analyitical and, given the fact that some systems behave in a very complex, 
+non-linear way, these methods became harder and harder to build and 
+understand. 
+
+But, with the recent advances in computational power, another approach was 
+used to solve those scientific problems. This approach is oriented on 
+empirical observations, being driven by the data, rather than the model and 
+is called Machine Learning. The main purpose of it is to learn complex patterns 
+and relations in data, without providing the rules explicitly.
+
+The educational environment is a good place to apply these automatic models, 
+since a lot of data is present here, it is hard to manually make inferences 
+about the given datasets and a general overview of the structure of data is 
+almost impossible to obtain without the help of intelligent systems.
+
+In this report we are going to use a Machine Learning approach to solve the 
+problem of automatic grade prediction by using two popular models, i.e. 
+Neural Networks and Random Forest. The workflow which our project will use 
+for building the model is show in the next diagram: 
+
+\insfigshw{diagram.png}%
+    {Workflow of a ML model}%
+    {Workflow of a ML model}%
+    {fig.diagram}{0.8}
+
+
 \section{Motivation}
 
-Lucrarea este structurată astfel: un fisier de configurare poate fi găsit în
-anexa \ref{anx.cfg}.
+Sometimes, evaluating the students performance in a course during the semester 
+is found to be a difficult issue. The obstacles come from the fact that there 
+are many students in an undergratuate class, and analyzing each of them is 
+not so scalable, due to the limited number of course staff. Moreover, if the 
+course is a difficult one and most students have problems passing it, we
+want to help these students get on track before taking the final exam and 
+failing it. 
 
-Mai jos urmează niște text de umplutură și un algoritm realizat cu
-\href{http://www.ctan.org/tex-archive/macros/latex/contrib/algorithm2e/algorithm2e.pdf}{algortihm2e}.
+For the problem stated above, a Machine Learning solution comes naturally, 
+since it offers a way of classifying students and making predictions about 
+their final grades. Also, with Machine Learning tools we can get insights 
+about what grading components should we look at when we will want to assess 
+the performance of a student before the course ending.
 
-Duis consectetur tempor volutpat. Nullam molestie, nibh fringilla egestas
-euismod, mi eros euismod augue, eu rutrum mi nibh vitae sapien. Sed ultricies
-vehicula est a tincidunt. Aenean nec ligula purus, quis porttitor velit. Donec
-ultrices, velit sed facilisis condimentum, ligula ligula facilisis mi, ac
-accumsan arcu tellus eu tortor. In congue mauris ac est aliquet a ullamcorper
-dui fermentum. Donec venenatis nulla ut lectus cursus elementum. Phasellus
-vulputate aliquet dolor convallis placerat. Nam pharetra, nibh ut mollis
-venenatis, purus nisl adipiscing diam, quis dignissim mauris risus non velit.
-Aliquam et mauris non tortor malesuada luctus. Integer quis justo turpis.
+\section{Contributions}
 
+The initial purpose of this project was to build an automated model for grading 
+students based on the semester activity of each student. Later, this aim 
+took the form of a model focused on getting important information from the 
+data. Specifically, we wanted to use this model for helping students with 
+a high probability of failing the course as early as possible during the semester. 
 
-\SetEndCharOfAlgoLine{}
-\begin{algorithm}[htb]
-	\SetKw{In}{in}
-	\SetKw{Is}{is}
-	\SetKw{Null}{null}
-	
-	\textbf{function} \emph{eval():}\;
-	\Begin{
-		\If{bubu = \Null}{
-			\Return{\Null}
-		}
-		bubu $\leftarrow$ bibi\;
-		\ForEach{foo \In bar}{
-			\uIf{foo \Is zaz}{
-				bubu $\leftarrow$ bubu['$lili.lala$']\;
-			}
-			\ElseIf{term \Is Call}{
-				bibi $\leftarrow$ call(cucu)\;
-			}
-		}
-		\Return{crtContext}
-	}
-	\caption{Algoritmul de evaluare al crocobazilor.}
-\end{algorithm}
+The contributions of the project include:
 
-Textul următor este citat din.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce auctor ultrices
-sollicitudin. Ut sed lobortis nunc. Proin adipiscing erat vel dolor pharetra
-sed semper felis malesuada. Quisque imperdiet augue lectus. Nulla facilisi.
-Fusce tortor quam, pharetra et blandit et, pulvinar convallis risus. Nam id
-molestie dolor. Phasellus aliquam laoreet dolor, vel semper neque blandit sit
-amet. Quisque quis tellus ipsum. Fusce fringilla, neque vitae tincidunt
-placerat, turpis metus dignissim justo, quis blandit justo est nec tellus. Nunc
-pretium, felis sed mattis euismod, metus leo tempus risus, a sodales augue
-lorem id libero.
-
-\subsection{Lorem ipsum}
-
-Duis consectetur tempor volutpat. Nullam molestie, nibh fringilla egestas
-euismod, mi eros euismod augue, eu rutrum mi nibh vitae sapien. Sed ultricies
-vehicula est a tincidunt. Aenean nec ligula purus, quis porttitor velit. Donec
-ultrices, velit sed facilisis condimentum, ligula ligula facilisis mi, ac
-accumsan arcu tellus eu tortor. In congue mauris ac est aliquet a ullamcorper
-dui fermentum. Donec venenatis nulla ut lectus cursus elementum. Phasellus
-vulputate aliquet dolor convallis placerat. Nam pharetra, nibh ut mollis
-venenatis, purus nisl adipiscing diam, quis dignissim mauris risus non velit.
-Aliquam et mauris non tortor malesuada luctus. Integer quis justo turpis.
-
-
-\insfigshw{fix-bug-curve.pdf}%
-	{Variația costului de remediere a dudelor cu momentul descoperirii
-	lor}%
-	{Variația costului de remediere a dudelor}%
-	{fig.fix-bug-curve}{0.5}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce auctor ultrices
-sollicitudin. Ut sed lobortis nunc. Proin adipiscing erat vel dolor pharetra
-sed semper felis malesuada. Quisque imperdiet augue lectus. Nulla facilisi.
-Fusce tortor quam, pharetra et blandit et, pulvinar convallis risus. Nam id
-molestie dolor. Phasellus aliquam laoreet dolor, vel semper neque blandit sit
-amet. Quisque quis tellus ipsum. Fusce fringilla, neque vitae tincidunt
-placerat, turpis metus dignissim justo, quis blandit justo est nec tellus. Nunc
-pretium, felis sed mattis euismod, metus leo tempus risus, a sodales augue
-lorem id libero.
-
-
+\begin{itemize}
+\item A research done on Machine Learning techniques and software frameworks 
+appropiate for our use case
+\item A working model that proves the point of using Machine Learning for 
+automatic grade predictions
+\item An evaluation of the model, with focus on educational analysis
+\item A generic way of using the developed model to other undergraduate courses 
+related with the ones we used
+\end{itemize}

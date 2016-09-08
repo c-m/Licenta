@@ -13,6 +13,9 @@ Next, we are going to focus on the {\it scikit-learn Python} library, which is
 an open-source Machine Learning library with many implemented features. Here, 
 we will show how we used our chosen models with the help of this library.  
 
+At the end of the chapter we briefly discuss how the whole implementation was 
+tested with data that did not take part in the training process.
+
 \section{Parsing the students data}
 
 All the data used in this project was taken from the course catalog and from 
@@ -98,10 +101,33 @@ based on training and testing data performance metrics.
 
 Using the random forest classfier only requires changing the \texttt{clf} 
 variable in the code listed above to: \texttt{clf = RandomForestClassifier(n\_estimators=10, 
-max\_features='sqrt')} and the rest of the code can remain unchanged. 
+max\_features='sqrt')} and the rest of the code can remain unchanged (the library 
+gives us a standard interface for the training algorithms, no matter which one 
+is used). 
 
 If we want to see the feature ranking computed by the random forest model, we 
 need to use the \texttt{clf.feature\_importances\_} attribute of the \texttt{clf} 
 classifier object. Having this array of values - a probability distribution over 
 the feature set, it is easy to plot the feature importances and their names on 
-a graph, along with their standard deviations. 
+a graph, along with their standard deviations. The \ref{rf} code listing shows 
+how we got the feature ranks from our trained model in order to plot them. 
+
+\lstinputlisting[label=rf,caption=Plot Feature Ranks,language=Python,basicstyle=\footnotesize]{rf.py}
+
+\section{Testing}
+
+The testing process was done after we trained each of the models. From the 
+\ref{nn_clf} code listing it can be seen that we have kept a subset of our entire 
+dataset for the testing purposes (actually 20\% of the dataset). This testing 
+data was used to evaluate the model and assess its accuracy, i.e. how well the 
+model behaves with new data. 
+
+Also, the implementation provides a testing source file named 
+\texttt{test\_models.py} that serves as a POC\footnote{Proof-of-Concept} for 
+the functionality of the project. Here, our implemented models will be 
+automatically loaded and trained and then, compared to each other. The test module 
+will provide an easy command line interface that will 
+allow the user to give as input to the program some examples and then 
+get insights about them. The user will provide the features for their examples 
+and will choose the subset of features and also the model that will be used for 
+prediction. 

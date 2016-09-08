@@ -1,7 +1,6 @@
 \select@language {english}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {1.1}{\ignorespaces Algoritmul de evaluare al crocobazilor.}}{2}{figure.1.1}
-\contentsline {figure}{\numberline {1.2}{\ignorespaces Varia\IeC {{\textcommabelow t}}ia costului de remediere a dudelor}}{3}{figure.1.2}
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Workflow of a ML model}}{2}{figure.1.1}
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {2.1}{\ignorespaces Classifiers accuracy}}{8}{figure.2.1}
 \addvspace {10\p@ }
@@ -14,4 +13,11 @@
 \contentsline {figure}{\numberline {3.7}{\ignorespaces 3-class NN classifier with one hidden layer}}{29}{figure.3.7}
 \contentsline {figure}{\numberline {3.8}{\ignorespaces Random Forest model}}{30}{figure.3.8}
 \addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces 2D PCA of PP dataset}}{39}{figure.5.1}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces 2D PCA of PP dataset}}{39}{figure.5.2}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces AA Confusion Matrix}}{40}{figure.5.3}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces PP Confusion Matrix}}{40}{figure.5.4}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Confusion Matrix for 3 classes}}{42}{figure.5.5}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Feature ranking}}{43}{figure.5.6}
 \addvspace {10\p@ }
