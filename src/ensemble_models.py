@@ -49,7 +49,8 @@ def random_forest_clf(data):
 
     for f in range(X_train.shape[1]):
         print("%d. feature %d, name: %s, (%f)" % \
-            (f + 1, indices[f], data['feature_names'][indices[f]], importances[indices[f]]))
+            (f + 1, indices[f], data['feature_names'][indices[f]], 
+                importances[indices[f]]))
 
     # Plot the feature importances of the forest
     plt.figure()
@@ -63,6 +64,7 @@ def random_forest_clf(data):
     model_eval(clf, X_train, Y_train, X_test, Y_test, LABEL_NAMES_BIN)
     #print 'Out-of-bag error score: %f' % clf.oob_score_
     #print clf.oob_decision_function_
+    return clf
 
 
 def random_forest_3clf(data):
@@ -128,6 +130,7 @@ def random_forest_3clf(data):
     model_eval(clf, X_train, Y_train, X_test, Y_test, LABEL_NAMES_MULT)
     #print 'Out-of-bag error score: %f' % clf.oob_score_
     #print clf.oob_decision_function_
+    return clf
 
 
 def random_forest_regr(data):
@@ -145,6 +148,9 @@ def random_forest_regr(data):
              axis=0)
 
     indices = np.argsort(importances)[::-1]
+    idx_names = list()
+    for i in range(X_train.shape[1]):
+        idx_names.append(data['feature_names'][indices[i]])
 
     # Print the feature ranking
     print("Feature ranking:")
@@ -158,11 +164,12 @@ def random_forest_regr(data):
     plt.title("Feature importances")
     plt.bar(range(X_train.shape[1]), importances[indices],
            color="r", yerr=std[indices], align="center")
-    plt.xticks(range(X_train.shape[1]), indices)
+    plt.xticks(range(X_train.shape[1]), idx_names)
     plt.xlim([-1, X_train.shape[1]])
     plt.show()
 
     regressor_eval(regr, X_train, Y_train, X_test, Y_test)
+    return regr
 
 
 def adaboost_clf(data):
@@ -251,7 +258,7 @@ def main():
     else:
         data = get_data(option, all_dataset)
 
-    data = preprocess_data(data, poly_features=False, scale=False)
+    (data, scaler) = preprocess_data(data, poly_features=False, scale=True)
 
     #classification with RandomForestClassifier
     #random_forest_3clf(data)

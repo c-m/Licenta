@@ -28,10 +28,13 @@ def plot_confusion_matrix(cm, label_names, title='Confusion matrix', cmap=plt.cm
 
 def model_eval(clf, X_nn, Y_nn, X_nn_test, Y_nn_test, label_names):
 	prob = clf.predict_proba(X_nn_test)
+	print 'Probability distributions:'
 	print prob
 	
 	_y_test = clf.predict(X_nn_test)
+	print 'Real labels:'
 	print Y_nn_test
+	print 'Predicted labels:'
 	print _y_test
 	
 	#analyze how good/bad is the model
@@ -55,6 +58,7 @@ def model_eval(clf, X_nn, Y_nn, X_nn_test, Y_nn_test, label_names):
 		t.append(p[Y_nn_test[i]])
 		i += 1
 	y_prob = np.array(t)
+	print 'Probabilities used for computing KL divergence:'
 	print y_prob
 
 	brier_loss = brier_score_loss(Y_nn_test, y_prob)
@@ -101,7 +105,9 @@ def model_eval(clf, X_nn, Y_nn, X_nn_test, Y_nn_test, label_names):
 def regressor_eval(clf, X_nn, Y_nn, X_nn_test, Y_nn_test):
 	_y_train = clf.predict(X_nn)
 	_y_test = clf.predict(X_nn_test)
+	print 'Real labels:'
 	print Y_nn_test
+	print 'Predicted labels:'
 	print _y_test
 
 	print '----------Train----------'
@@ -146,7 +152,7 @@ def nn_binary_classifier(data):
 	clf = MLPClassifier(algorithm='sgd', 
 						alpha=1e-5,
 						activation='tanh', 
-						hidden_layer_sizes=(200,),
+						hidden_layer_sizes=(10,),
 						random_state=1,
 						max_iter=1000,
 						batch_size='auto',
@@ -158,6 +164,7 @@ def nn_binary_classifier(data):
 
 	#evaluate de trained model
 	model_eval(clf, X_nn, Y_nn, X_nn_test, Y_nn_test, LABEL_NAMES_BIN)
+	return clf
 
 
 def nn_classifier(data):
@@ -192,8 +199,8 @@ def nn_classifier(data):
 	Y_nn = np.array(Y_nn_list, dtype=int)
 	Y_nn_test = np.array(Y_nn_test_list, dtype=int)
 
-	print Y_nn
-	print Y_nn_test
+	#print Y_nn
+	#print Y_nn_test
 
 	clf = MLPClassifier(algorithm='sgd', 
 						alpha=1e-5,
@@ -207,10 +214,11 @@ def nn_classifier(data):
 						verbose=False)
 
 	clf.fit(X_nn, Y_nn)
-	print X_nn.shape
+	#print X_nn.shape
 
 	#evaluate de trained model
 	model_eval(clf, X_nn, Y_nn, X_nn_test, Y_nn_test, LABEL_NAMES_MULT)
+	return clf
 
 
 def nn_regressor(data):
@@ -223,21 +231,22 @@ def nn_regressor(data):
 	Y_nn = data['train_labels'][:,0]
 	Y_nn_test = data['test_labels'][:,0]
 	
-	clf = MLPRegressor(algorithm='sgd', 
+	regr = MLPRegressor(algorithm='sgd', 
 						alpha=1e-5,
-						activation='relu',
-						hidden_layer_sizes=(100,),
+						activation='tanh',
+						hidden_layer_sizes=(20,),
 						random_state=1,
-						max_iter=500,
+						max_iter=1000,
 						batch_size='auto',
 						learning_rate='constant',
 						learning_rate_init=0.001,
-						verbose=True)
+						verbose=False)
 
-	clf.fit(X_nn, Y_nn)
+	regr.fit(X_nn, Y_nn)
 
 	#evaluate the MLPRegressor model
-	regressor_eval(clf, X_nn, Y_nn, X_nn_test, Y_nn_test)
+	regressor_eval(regr, X_nn, Y_nn, X_nn_test, Y_nn_test)
+	return regr
 
 
 def main():
@@ -252,16 +261,16 @@ def main():
 	else:
 	    data = get_data(option, all_dataset)
 
-	data = preprocess_data(data, poly_features=False)
+	(data, scaler) = preprocess_data(data, poly_features=False)
 
 	#binary classificication based on exam/final grade
 	#nn_binary_classifier(data)
 
 	#3-class classification based on exam/final grade
-	nn_classifier(data)
+	#nn_classifier(data)
 
 	#regression for exam_grades using MLPRegressor() class
-	#nn_regressor(data)
+	nn_regressor(data)
 
 
 if __name__ == '__main__':

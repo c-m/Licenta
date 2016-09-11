@@ -224,7 +224,7 @@ def get_data(option, dataset):
 			labels = v['labels'].values()
 			dataset_out[i] = np.array(features, dtype=np.float)
 			labels_out[i] = np.array(labels, dtype=np.float)
-		print dataset_out
+		# print dataset_out
 
 	if option != Options.LOGS_ONLY:
 		n_training = int(np.ceil(n_examples*TRAIN_TO_TEST_RATIO))
@@ -327,7 +327,7 @@ def preprocess_data(data, poly_features=False, scale=True):
 	data['train_data'] = train_data
 	data['test_data'] = test_data
 
-	return data
+	return data, scaler
 
 
 def main():
@@ -341,7 +341,7 @@ def main():
 	else:
 		data = get_data(option, all_dataset)
 
-	data = preprocess_data(data, poly_features=False)	
+	(data, scaler) = preprocess_data(data, poly_features=False)	
 
 	# plot labels
 	exam_grades = np.hstack((data['train_labels'][:,0], data['test_labels'][:,0]))
