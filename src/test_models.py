@@ -14,13 +14,13 @@ from sklearn.preprocessing import StandardScaler
 
 def load_arguments():
     parser = ArgumentParser()
-    parser.add_argument("--features", type = str, default = Options.ALL_FEATURES_AGG,
+    parser.add_argument("--features", type=str, default=Options.ALL_FEATURES_AGG,
                         help="Features used")
-    parser.add_argument("--problem", type = str, default = 'clf',
+    parser.add_argument("--problem", type=str, default='clf',
                         help="Problem to test: clf, 3clf, regr")
-    parser.add_argument("--model", type = str, default = 'nn',
+    parser.add_argument("--model", type=str, default='nn',
                         help="Model used: nn, rf")
-    parser.add_argument("--input", type = bool, default = False,
+    parser.add_argument("--input", action='store_true',
                         help="Provide test input for the trained model")
     args = parser.parse_args()
     return args
